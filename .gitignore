@@ -2,6 +2,7 @@
 *.ini
 *.txt
 client_secret.json
+GrainSpider.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -28,6 +29,9 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+venv/
+*.idea
+__pycache__/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
