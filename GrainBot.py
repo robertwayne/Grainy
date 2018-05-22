@@ -41,7 +41,7 @@ async def get_grain_price():
     while not client.is_closed:
         await asyncio.sleep(10)
         br.open('{url}'.format(url=Configuration.LAND_URL))
-        result = br.find('h2', {'class': 'text-bold text-light space-1'}).get_text()
+        result = br.find('h2', {'class': '{pcs}'.format(pcs=Configuration.PRICE_CSS_SELECTOR)}).get_text()
 
         # replace 'result' commas with whitespace and convert to a float
         r = result.replace(',', '')
