@@ -39,23 +39,23 @@ async def get_grain_price():
     previous_price = 0
 
     while not client.is_closed:
-        await asyncio.sleep(10)
+        await asyncio.sleep(Configuration.UPDATE_RATE)
         br.open('{url}'.format(url=Configuration.LAND_URL))
         result = br.find('h2', {'class': '{pcs}'.format(pcs=Configuration.PRICE_CSS_SELECTOR)}).get_text()
 
         # replace 'result' commas with whitespace and convert to a float
         r = result.replace(',', '')
         price = (float(r))
-        channel = client.get_channel(Configuration.CHANNEL_ID)
+        channel = client.get_channel('{cha}'.format(cha=Configuration.CHANNEL_ID))
 
         if price > Configuration.EVERYONE_ALERT_THRESHOLD:
             print('@everyone Grain Price: ' + r)
-            client.send_message(channel, '@everyone Grain Price: ' + r)
+            await client.send_message(channel, '@everyone Grain Price: ' + r)
         elif price > Configuration.ALERT_THRESHOLD and previous_price != r:
             print('Grain Price: ' + r)
-            client.send_message(channel, 'Grain Price: ' + r)
+            await client.send_message(channel, 'Grain Price: ' + r)
             previous_price = r
-            await asyncio.sleep(10)
+            await asyncio.sleep(Configuration.UPDATE_RATE)
 
 
 @client.event
