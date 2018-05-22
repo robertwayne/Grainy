@@ -1,0 +1,22 @@
+; THIS IS A TEMPLATE FOR YOUR CONFIG.INI FILE.
+; Rename this file to 'config.ini' and fill in all the 'replaceme' sections
+; UPDATE_RATE is a integer based on seconds between page refreshes.
+; ALERT_THRESHOLD is a float that determines when the bot will make a callout in chat.
+
+
+[BOT-INFO]
+BOT_TOKEN = replaceme
+BOT_USERNAME = replaceme
+BOT_PASSWORD = replaceme
+
+[GAME-INFO]
+LOGIN_URL = replaceme
+LAND_URL = replaceme
+UPDATE_RATE = replaceme
+ALERT_THRESHOLD = replaceme
+LOCALE_DATA = replaceme
+EVERYONE_ALERT_THRESHOLD = replaceme
+PRICE_CSS_SELECTOR = replaceme
+
+[DISCORD-INFO]
+CHANNEL_ID = replaceme
