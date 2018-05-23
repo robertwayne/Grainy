@@ -27,12 +27,9 @@ except SyntaxError:
     print("Form submission failed. Invalid log-in data.")
 
 
-async def refresh():
-    try:
-        Configuration.config.read('config.ini')
-        print('Configuration reloaded.')
-    except FileNotFoundError:
-        print('Cannot read file /config.ini -- make sure it exists.')
+async def refresh_config():
+    return
+
 
 
 async def get_grain_price():
