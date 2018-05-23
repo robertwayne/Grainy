@@ -5,6 +5,7 @@ from robobrowser import RoboBrowser
 import discord
 import Configuration
 import re
+import datetime
 
 # Create Discord client session
 client = discord.Client()
@@ -49,16 +50,20 @@ async def get_grain_price():
         # replace 'result' commas with whitespace and convert to a float
         r = result.replace(',', '')
         price = (float(r))
+        dt = datetime.datetime.utcnow()
 
         if price > Configuration.EVERYONE_ALERT_THRESHOLD:
             print('@everyone Grain Price: ' + r)
-            await client.send_message(channel, '@everyone Grain Price: ' + r + ' Sell: <https://www.zapoco.com/land/grain>')
+            em = discord.Embed(title="Grain Alert", url="https://www.zapoco.com/land/grain",
+                               description="**@ everyone Price: " + r + "**",
+                               color=0x783e8e, timestamp=dt)
             previous_price = r
         elif price > Configuration.ALERT_THRESHOLD and previous_price != r:
             print('Grain Price: ' + r)
-            #await client.send_message(channel, 'Grain Price: ' + r + ' Sell: <https://www.zapoco.com/land/grain>')
+
             em = discord.Embed(title="Grain Alert", url="https://www.zapoco.com/land/grain",
-                                                    description="Price: " + r, color=0xff211c)
+                               description="**Price: " + r + "**",
+                               color=0x783e8e, timestamp=dt)
             await client.send_message(channel, embed=em)
             await asyncio.sleep(Configuration.UPDATE_RATE)
 
