@@ -69,12 +69,14 @@ async def get_npc_health():
 
         if guard_hp != '670/670' or mech_hp != '570/570':
             if guard_hp != '670/670' and guard_hp <= previous_guard_hp:
+                print('Guard Health: ' + guard_hp)
                 await client.send_message(channel, 'The Guard has been attacked! Current health: ' + guard_hp)
                 previous_guard_hp = guard_hp
             elif mech_hp != '570/570' and mech_hp <= previous_mech_hp:
+                print('Mechanic Health:' + mech_hp)
                 await client.send_message(channel, 'The Mechanic has been attacked! Current health: ' + mech_hp)
                 previous_mech_hp = mech_hp
-        await asyncio.sleep(10)
+        await asyncio.sleep(301)
 
 
 @client.event
