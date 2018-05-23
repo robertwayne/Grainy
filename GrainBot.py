@@ -28,6 +28,8 @@ except SyntaxError:
     print("Form submission failed. Invalid log-in data.")
 
 
+
+
 async def refresh_config():
     return
 
@@ -35,6 +37,9 @@ async def refresh_config():
 async def get_grain_price():
     channel = client.get_channel('{cha}'.format(cha=Configuration.CHANNEL_ID))
     previous_price = 0
+
+    # build the embed
+    # discord.Embed(title="Grain Alert", url="https://www.zapoco.com/land/grain", description="Grain Price: " + r)
 
     while not client.is_closed:
         await asyncio.sleep(Configuration.UPDATE_RATE)
@@ -51,7 +56,9 @@ async def get_grain_price():
             previous_price = r
         elif price > Configuration.ALERT_THRESHOLD and previous_price != r:
             print('Grain Price: ' + r)
-            await client.send_message(channel, 'Grain Price: ' + r + ' Sell: <https://www.zapoco.com/land/grain>')
+            #await client.send_message(channel, 'Grain Price: ' + r + ' Sell: <https://www.zapoco.com/land/grain>')
+            await discord.Embed(title="Grain Alert", url="https://www.zapoco.com/land/grain",
+                                description="Price: " + r, color=0xff211c)
             previous_price = r
             await asyncio.sleep(Configuration.UPDATE_RATE)
 
