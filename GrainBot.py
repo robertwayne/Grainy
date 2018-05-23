@@ -62,7 +62,7 @@ async def get_npc_health():
     previous_guard_hp = '670/670'
 
     while not client.is_closed:
-        await asyncio.sleep(1)
+        await asyncio.sleep(1800)
         br.open('https://www.zapoco.com/user/4')
         guard_hp = br.find(string=re.compile('670'))
         br.open('https://www.zapoco.com/user/1220')
@@ -77,7 +77,7 @@ async def get_npc_health():
                 print('Mechanic Health:' + mech_hp)
                 await client.send_message(channel, 'The Mechanic has been attacked! Current health: ' + mech_hp)
                 previous_mech_hp = mech_hp
-        await asyncio.sleep(301)
+        await asyncio.sleep(1800)
 
 
 @client.event
