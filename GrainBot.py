@@ -48,11 +48,11 @@ async def get_grain_price():
         if price > Configuration.EVERYONE_ALERT_THRESHOLD:
             print('@everyone Grain Price: ' + r)
             await client.send_message(channel, '@everyone Grain Price: ' + r)
+            previous_price = r
         elif price > Configuration.ALERT_THRESHOLD and previous_price != r:
             print('Grain Price: ' + r)
             await client.send_message(channel, 'Grain Price: ' + r)
             previous_price = r
-            await asyncio.sleep(Configuration.UPDATE_RATE)
 
 
 async def get_npc_health():
