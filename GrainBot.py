@@ -74,7 +74,7 @@ async def get_npc_health():
             elif mech_hp != '570/570' and mech_hp <= previous_mech_hp:
                 await client.send_message(channel, 'The Mechanic has been attacked! Current health: ' + mech_hp)
                 previous_mech_hp = mech_hp
-        await asyncio.sleep(301)
+        await asyncio.sleep(10)
 
 
 @client.event
