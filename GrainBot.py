@@ -59,7 +59,7 @@ async def get_grain_price():
             #await client.send_message(channel, 'Grain Price: ' + r + ' Sell: <https://www.zapoco.com/land/grain>')
             em = discord.Embed(title="Grain Alert", url="https://www.zapoco.com/land/grain",
                                                     description="Price: " + r, color=0xff211c)
-            await client.send_message(channel, em)
+            await client.send_message(channel, embed=em)
             await asyncio.sleep(Configuration.UPDATE_RATE)
 
 
