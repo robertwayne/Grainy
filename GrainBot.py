@@ -4,6 +4,7 @@ import asyncio
 from robobrowser import RoboBrowser
 import discord
 import Configuration
+import re
 
 # Create Discord client session
 client = discord.Client()
@@ -31,8 +32,8 @@ async def refresh_config():
     return
 
 
-
 async def get_grain_price():
+    channel = client.get_channel('{cha}'.format(cha=Configuration.CHANNEL_ID))
     previous_price = 0
 
     while not client.is_closed:
@@ -43,7 +44,6 @@ async def get_grain_price():
         # replace 'result' commas with whitespace and convert to a float
         r = result.replace(',', '')
         price = (float(r))
-        channel = client.get_channel('{cha}'.format(cha=Configuration.CHANNEL_ID))
 
         if price > Configuration.EVERYONE_ALERT_THRESHOLD:
             print('@everyone Grain Price: ' + r)
@@ -53,6 +53,24 @@ async def get_grain_price():
             await client.send_message(channel, 'Grain Price: ' + r)
             previous_price = r
             await asyncio.sleep(Configuration.UPDATE_RATE)
+
+
+async def get_npc_health():
+    channel = client.get_channel('{cha}'.format(cha=Configuration.CHANNEL_ID))
+
+    while not client.is_closed:
+        await asyncio.sleep(1)
+        br.open('https://www.zapoco.com/user/4')
+        guard_hp = br.find(string=re.compile('670'))
+        br.open('https://www.zapoco.com/user/1220')
+        mech_hp = br.find(string=re.compile('570'))
+
+        if guard_hp != '670/670' or mech_hp == '570/570':
+            if guard_hp != '670/670':
+                await client.send_message(channel, 'The Guard has been attacked! Current health: ' + guard_hp)
+            elif mech_hp == '570/570':
+                await client.send_message(channel, 'The Mechanic has been attacked! Current health: ' + mech_hp)
+        await asyncio.sleep(301)
 
 
 @client.event
@@ -68,6 +86,7 @@ async def on_ready():
     print('------')
     print('Tracking grain...')
     client.loop.create_task(get_grain_price())
+    client.loop.create_task(get_npc_health())
 
 try:
     client.run(Configuration.BOT_TOKEN)
