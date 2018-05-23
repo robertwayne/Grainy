@@ -53,6 +53,7 @@ async def get_grain_price():
             print('Grain Price: ' + r)
             await client.send_message(channel, 'Grain Price: ' + r)
             previous_price = r
+            await asyncio.sleep(Configuration.UPDATE_RATE)
 
 
 async def get_npc_health():

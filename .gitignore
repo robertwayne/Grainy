@@ -3,6 +3,7 @@
 *.txt
 client_secret.json
 GrainSpider.py
+MaxGrains Extension/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
