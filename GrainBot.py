@@ -56,7 +56,7 @@ async def get_grain_price():
 
 
 async def get_npc_health():
-    channel = client.get_channel('{cha}'.format(cha=Configuration.CHANNEL_ID))
+    channel = client.get_channel('448572817357799454')
     previous_mech_hp = '570/570'
     previous_guard_hp = '670/670'
 
