@@ -65,10 +65,10 @@ async def get_npc_health():
         br.open('https://www.zapoco.com/user/1220')
         mech_hp = br.find(string=re.compile('570'))
 
-        if guard_hp != '670/670' or mech_hp == '570/570':
+        if guard_hp != '670/670' or mech_hp != '570/570':
             if guard_hp != '670/670':
                 await client.send_message(channel, 'The Guard has been attacked! Current health: ' + guard_hp)
-            elif mech_hp == '570/570':
+            elif mech_hp != '570/570':
                 await client.send_message(channel, 'The Mechanic has been attacked! Current health: ' + mech_hp)
         await asyncio.sleep(301)
 
