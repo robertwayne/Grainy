@@ -57,6 +57,8 @@ async def get_grain_price():
 
 async def get_npc_health():
     channel = client.get_channel('{cha}'.format(cha=Configuration.CHANNEL_ID))
+    previous_mech_hp = '570/570'
+    previous_guard_hp = '670/670'
 
     while not client.is_closed:
         await asyncio.sleep(1)
@@ -66,12 +68,12 @@ async def get_npc_health():
         mech_hp = br.find(string=re.compile('570'))
 
         if guard_hp != '670/670' or mech_hp != '570/570':
-            if guard_hp != '670/670':
+            if guard_hp != '670/670' and guard_hp <= previous_guard_hp:
                 await client.send_message(channel, 'The Guard has been attacked! Current health: ' + guard_hp)
-                await asyncio.sleep(3600)
-            elif mech_hp != '570/570':
+                previous_guard_hp = guard_hp
+            elif mech_hp != '570/570' and mech_hp <= previous_mech_hp:
                 await client.send_message(channel, 'The Mechanic has been attacked! Current health: ' + mech_hp)
-                await asyncio.sleep(3600)
+                previous_mech_hp = mech_hp
         await asyncio.sleep(301)
 
 
