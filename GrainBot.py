@@ -29,8 +29,6 @@ except SyntaxError:
     print("Form submission failed. Invalid log-in data.")
 
 
-
-
 async def refresh_config():
     return
 
@@ -55,7 +53,7 @@ async def get_grain_price():
         if price > Configuration.EVERYONE_ALERT_THRESHOLD:
             print('@everyone Grain Price: ' + r)
             em = discord.Embed(title="Grain Alert", url="https://www.zapoco.com/land/grain",
-                               description="**@ everyone Price: " + r + "**",
+                               description="@everyone** Price: " + r + "**",
                                color=0x783e8e, timestamp=dt)
             await client.send_message(channel, embed=em)
             previous_price = r
