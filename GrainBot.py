@@ -57,9 +57,9 @@ async def get_grain_price():
         elif price > Configuration.ALERT_THRESHOLD and previous_price != r:
             print('Grain Price: ' + r)
             #await client.send_message(channel, 'Grain Price: ' + r + ' Sell: <https://www.zapoco.com/land/grain>')
-            await client.send_message(channel, discord.Embed(title="Grain Alert", url="https://www.zapoco.com/land/grain",
-                                                    description="Price: " + r, color=0xff211c))
-            previous_price = r
+            em = discord.Embed(title="Grain Alert", url="https://www.zapoco.com/land/grain",
+                                                    description="Price: " + r, color=0xff211c)
+            await client.send_message(channel, em)
             await asyncio.sleep(Configuration.UPDATE_RATE)
 
 
