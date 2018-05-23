@@ -63,6 +63,7 @@ async def get_grain_price():
                                description="**Price: " + r + "**",
                                color=0x783e8e, timestamp=dt)
             await client.send_message(channel, embed=em)
+            previous_price = r
             await asyncio.sleep(Configuration.UPDATE_RATE)
 
 
