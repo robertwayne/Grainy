@@ -105,7 +105,7 @@ async def on_message(message):
 
     if message.content.startswith('!restart'):
             if message.author.id == '159798281151578112':
-                channel = client.get_channel('448201072033660961')
+                channel = client.get_channel('{cha}'.format(cha=Configuration.CHANNEL_ID))
                 await client.send_message(channel, 'Restarting now!')
                 print('Restarting...')
                 await reload_bot()
