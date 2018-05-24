@@ -103,11 +103,11 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    if message.content.startswith('!reload'):
+    if message.content.startswith('!restart'):
             if message.author.id == '159798281151578112':
                 channel = client.get_channel('448572817357799454')
                 await client.send_message(channel, 'Restarting now!')
-                print('Reloading files...')
+                print('Restarting...')
                 await reload_bot()
 
 
