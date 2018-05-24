@@ -1,3 +1,4 @@
+#!/usr/bin/python
 from gevent import monkey; monkey.patch_socket()
 import grequests
 import asyncio
@@ -6,6 +7,9 @@ import discord
 import Configuration
 import re
 import datetime
+import sys
+import os
+
 
 # Create Discord client session
 client = discord.Client()
@@ -29,8 +33,10 @@ except SyntaxError:
     print("Form submission failed. Invalid log-in data.")
 
 
-async def refresh_config():
-    return
+async def reload_bot():
+    python = sys.executable
+    await asyncio.sleep(1)
+    os.execl(python, python, *sys.argv)
 
 
 async def get_grain_price():
@@ -96,6 +102,11 @@ async def on_message(message):
     # we do not want the bot to reply to itself
     if message.author == client.user:
         return
+
+    if message.content.startswith('!reload'):
+            if message.author.id == '159798281151578112':
+                print('Reloading files...')
+                await reload_bot()
 
 
 @client.event
