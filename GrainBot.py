@@ -80,22 +80,22 @@ async def get_npc_health():
     previous_guard_hp = '670/670'
 
     while not client.is_closed:
-        await asyncio.sleep(1800)
+        await asyncio.sleep(300)
         br.open('https://www.zapoco.com/user/4')
         guard_hp = br.find(string=re.compile('670'))
-        br.open('https://www.zapoco.com/user/1220')
-        mech_hp = br.find(string=re.compile('570'))
+        #br.open('https://www.zapoco.com/user/1220')
+        #mech_hp = br.find(string=re.compile('570'))
 
-        if guard_hp != '670/670' or mech_hp != '570/570':
+        if guard_hp != '670/670':
             if guard_hp != '670/670' and guard_hp <= previous_guard_hp:
                 print('Guard Health: ' + guard_hp)
                 await client.send_message(channel, 'The Guard has been attacked! Current health: ' + guard_hp)
                 previous_guard_hp = guard_hp
-            elif mech_hp != '570/570' and mech_hp <= previous_mech_hp:
-                print('Mechanic Health:' + mech_hp)
-                await client.send_message(channel, 'The Mechanic has been attacked! Current health: ' + mech_hp)
-                previous_mech_hp = mech_hp
-        await asyncio.sleep(1800)
+            # elif mech_hp != '570/570' and mech_hp <= previous_mech_hp:
+            #    print('Mechanic Health:' + mech_hp)
+            #    await client.send_message(channel, 'The Mechanic has been attacked! Current health: ' + mech_hp)
+            #    previous_mech_hp = mech_hp
+        await asyncio.sleep(300)
 
 
 @client.event
