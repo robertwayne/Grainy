@@ -39,12 +39,35 @@ async def reload_bot():
     os.execl(python, python, *sys.argv)
 
 
+async def revive_counter():
+    channel = client.get_channel('448328096710656030')
+    base_url = br.open('https://www.zapoco.com/safehouses/view/49')
+    x = 191
+    sum = 0
+
+    for i in range(1, x+1):
+        br.open('https://www.zapoco.com/safehouses/view/49/' + '?page=%d' % i)
+        rev = br.find_all(string=re.compile('Seabiscuit'))
+        sum += (len(rev))
+        print(rev)
+        i += 1
+
+    print(sum)
+
+
+async def cylinder_counter():
+    channel = client.get_channel('{cha}'.format(cha=Configuration.CHANNEL_ID))
+    cylinder_circulation = 0
+
+    while not client.is_closed:
+        await asyncio.sleep(60)
+        br.open('https://www.zapoco.com/item/120')
+        result = br.find('h4', {'class': 'text-bold text-light'})
+
+
 async def get_grain_price():
     channel = client.get_channel('{cha}'.format(cha=Configuration.CHANNEL_ID))
     previous_price = 0
-
-    # build the embed
-    # discord.Embed(title="Grain Alert", url="https://www.zapoco.com/land/grain", description="Grain Price: " + r)
 
     while not client.is_closed:
         await asyncio.sleep(Configuration.UPDATE_RATE)
@@ -76,26 +99,19 @@ async def get_grain_price():
 
 async def get_npc_health():
     channel = client.get_channel('448572817357799454')
-    previous_mech_hp = '570/570'
     previous_guard_hp = '670/670'
 
     while not client.is_closed:
-        await asyncio.sleep(300)
+        await asyncio.sleep(60)
         br.open('https://www.zapoco.com/user/4')
         guard_hp = br.find(string=re.compile('670'))
-        #br.open('https://www.zapoco.com/user/1220')
-        #mech_hp = br.find(string=re.compile('570'))
 
         if guard_hp != '670/670':
             if guard_hp != '670/670' and guard_hp <= previous_guard_hp:
                 print('Guard Health: ' + guard_hp)
                 await client.send_message(channel, 'The Guard has been attacked! Current health: ' + guard_hp)
                 previous_guard_hp = guard_hp
-            # elif mech_hp != '570/570' and mech_hp <= previous_mech_hp:
-            #    print('Mechanic Health:' + mech_hp)
-            #    await client.send_message(channel, 'The Mechanic has been attacked! Current health: ' + mech_hp)
-            #    previous_mech_hp = mech_hp
-        await asyncio.sleep(300)
+        await asyncio.sleep(60)
 
 
 @client.event
@@ -105,12 +121,10 @@ async def on_message(message):
         return
 
     if message.content.startswith('!restart'):
-            if message.author.id == '159798281151578112' or message.author.id == '273167538144280576' \
-                                                            or message.author.id == '434023404656394240':
-                channel = client.get_channel('{cha}'.format(cha=Configuration.CHANNEL_ID))
-                await client.send_message(channel, 'Restarting now!')
-                print('Restarting...')
-                await reload_bot()
+            channel = client.get_channel('{cha}'.format(cha=Configuration.CHANNEL_ID))
+            await client.send_message(channel, 'Restarting now!')
+            print('Restarting...')
+            await reload_bot()
 
 
 @client.event
