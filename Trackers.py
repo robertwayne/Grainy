@@ -1,4 +1,3 @@
-from gevent import monkey; monkey.patch_socket()
 import grequests
 import asyncio
 import discord

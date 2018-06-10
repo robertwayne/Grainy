@@ -2,11 +2,10 @@
 from gevent import monkey; monkey.patch_socket()
 import Configuration
 import discord
-import Trackers
 import asyncio
-import logging
 from Client import client
 import Commands
+import Trackers
 
 ini = Configuration
 
