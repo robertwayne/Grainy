@@ -1,0 +1,4 @@
+gevent
+robobrowser
+grequests
+discord.py
