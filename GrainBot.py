@@ -1,141 +1,39 @@
 #!/usr/bin/python
 from gevent import monkey; monkey.patch_socket()
-import grequests
-import asyncio
-from robobrowser import RoboBrowser
-import discord
 import Configuration
-import re
-import datetime
-import sys
-import os
-
+import discord
+import Trackers
+import asyncio
+import logging
+from Client import client
+import Commands
 
 # Create Discord client session
-client = discord.Client()
-
-# Build a session and submit log-in data upon initialization
-headers = {
-    "Connection": "keep-alive"
-}
-
-session = grequests.Session()
-session.headers = headers
-br = RoboBrowser(session=session, parser='html.parser', history=True)
-br.open('{url}'.format(url=Configuration.LOGIN_URL))
-
-form = br.get_form()
-form['username'] = '{usr}'.format(usr=Configuration.BOT_USERNAME)
-form['password'] = '{pwd}'.format(pwd=Configuration.BOT_PASSWORD)
-try:
-    br.submit_form(form)
-except SyntaxError:
-    print("Form submission failed. Invalid log-in data.")
-
-
-async def reload_bot():
-    python = sys.executable
-    await asyncio.sleep(1)
-    os.execl(python, python, *sys.argv)
-
-
-async def revive_counter():
-    channel = client.get_channel('448328096710656030')
-    base_url = br.open('https://www.zapoco.com/safehouses/view/49')
-    x = 191
-    sum = 0
-
-    for i in range(1, x+1):
-        br.open('https://www.zapoco.com/safehouses/view/49/' + '?page=%d' % i)
-        rev = br.find_all(string=re.compile('Seabiscuit'))
-        sum += (len(rev))
-        print(rev)
-        i += 1
-
-    print(sum)
-
-
-async def cylinder_counter():
-    channel = client.get_channel('{cha}'.format(cha=Configuration.CHANNEL_ID))
-    cylinder_circulation = 0
-
-    while not client.is_closed:
-        await asyncio.sleep(60)
-        br.open('https://www.zapoco.com/item/120')
-        result = br.find('h4', {'class': 'text-bold text-light'})
-
-
-async def get_grain_price():
-    channel = client.get_channel('{cha}'.format(cha=Configuration.CHANNEL_ID))
-    previous_price = 0
-
-    while not client.is_closed:
-        await asyncio.sleep(Configuration.UPDATE_RATE)
-        br.open('{url}'.format(url=Configuration.LAND_URL))
-        result = br.find('h2', {'class': '{pcs}'.format(pcs=Configuration.PRICE_CSS_SELECTOR)}).get_text()
-
-        # replace 'result' commas with whitespace and convert to a float
-        r = result.replace(',', '')
-        price = (float(r))
-        dt = datetime.datetime.utcnow()
-
-        if price > Configuration.EVERYONE_ALERT_THRESHOLD and previous_price != r:
-            print('@everyone Grain Price: ' + r)
-            em = discord.Embed(title="Grain Alert", url="https://www.zapoco.com/land/grain",
-                               description="**Price: " + r + "**",
-                               color=0x783e8e, timestamp=dt)
-            await client.send_message(channel, '@everyone', embed=em)
-            previous_price = r
-            await asyncio.sleep(Configuration.UPDATE_RATE)
-        elif price > Configuration.ALERT_THRESHOLD and previous_price != r:
-            print('Grain Price: ' + r)
-            em = discord.Embed(title="Grain Alert", url="https://www.zapoco.com/land/grain",
-                               description="**Price: " + r + "**",
-                               color=0x783e8e, timestamp=dt)
-            await client.send_message(channel, embed=em)
-            previous_price = r
-            await asyncio.sleep(Configuration.UPDATE_RATE)
-
-
-async def get_npc_health():
-    channel = client.get_channel('448572817357799454')
-    previous_guard_hp = '670/670'
-
-    while not client.is_closed:
-        await asyncio.sleep(60)
-        br.open('https://www.zapoco.com/user/4')
-        guard_hp = br.find(string=re.compile('670'))
-
-        if guard_hp != '670/670':
-            if guard_hp != '670/670' and guard_hp <= previous_guard_hp:
-                print('Guard Health: ' + guard_hp)
-                await client.send_message(channel, 'The Guard has been attacked! Current health: ' + guard_hp)
-                previous_guard_hp = guard_hp
-        await asyncio.sleep(60)
+ini = Configuration
+logging.basicConfig(level=logging.WARNING)
 
 
 @client.event
-async def on_message(message):
-    # we do not want the bot to reply to itself
-    if message.author == client.user:
-        return
-
-    if message.content.startswith('!restart'):
-            channel = client.get_channel('{cha}'.format(cha=Configuration.CHANNEL_ID))
-            await client.send_message(channel, 'Restarting now!')
-            print('Restarting...')
-            await reload_bot()
+async def on_member_join(member):
+    # rewrite this to use config file and role ID's
+    role_new = discord.utils.get(member.server.roles, name="Fresh Faces / Outsiders")
+    role_hide = discord.utils.get(member.server.roles, name="Frank’s Little Beauties")
+    try:
+        await client.add_roles(member, role_new)
+    finally:
+        await client.add_roles(member, role_hide)
 
 
 @client.event
+@asyncio.coroutine
 async def on_ready():
     print('Logged in as ' + client.user.name + ' (' + client.user.id + ')')
-    print('------')
-    print('Tracking grain...')
-    client.loop.create_task(get_grain_price())
-    client.loop.create_task(get_npc_health())
+    print('-----------------------------------------')
+    print('Tracking all sorts of shit...')
+    # this needs to be rewritten asynchronously... source of crash
+    client.loop.create_task(Trackers.run_trackers())
 
 try:
-    client.run(Configuration.BOT_TOKEN)
+    client.run(ini.BOT_TOKEN)
 finally:
     client.loop.close()
