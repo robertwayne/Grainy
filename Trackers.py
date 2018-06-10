@@ -83,6 +83,66 @@ async def get_npc_health():
         await asyncio.sleep(60)
 
 
+
+
+
+class item:
+    item_type = ""
+    value = 0
+    in_circulation = 0
+
+    def toS(self):
+        return "{} {} {}".format(self.item_type, self.value, self.in_circulation)
+
+class weapon(item):
+    damage = 0
+    accuracy = 0
+    stealth = 0
+
+    def toS(self):
+        return "{} {} {} {}".format(self.super.toS(), self.damage, self.accuracy, self.stealth)
+
+
+def get_item_stats(browser, item_number):
+    browser.open('https://www.zapoco.com/item/{}'.format(item_number))
+
+    # regexes for different types of data
+    type_re = re.compile(r'<h4 class="text-bold text-light">(\w+)</h4>')
+    value_re = re.compile(r'<h4 class="text-bold text-light">(<i class="fa fa-medkit"></i> )??(\d+(,\d{3})*)</h4>')
+    progress_re = re.compile(r'<div class="progress" style="width:(\d+)%"></div>')
+
+    # grab the correct html snippets, as strings
+    type_div = "{}".format(browser.select('h4.text-light.text-bold')[0]) # Type
+    value_div = "{}".format(browser.select('h4.text-light.text-bold')[1]) # Value
+    circulation_div = "{}".format(browser.select('h4.text-light.text-bold')[3]) # In Circulation
+
+    # use regex to get the interesting data
+    i = item()
+    i.item_type = type_re.match(type_div)[1]
+    i.value = value_re.match(value_div)[2]
+    i.in_circulation = value_re.match(circulation_div)[2]
+
+    if (i.item_type == 'Weapon'):
+        w = weapon()
+        w.super = i
+
+        damage_div = "{}".format(browser.select('div.progress')[3]) # Damage
+        accuracy_div = "{}".format(browser.select('div.progress')[4]) # Accuracy
+        stealth_div = "{}".format(browser.select('div.progress')[5]) # Stealth
+
+        w.damage = progress_re.match(damage_div)[1]
+        w.accuracy = progress_re.match(accuracy_div)[1]
+        w.stealth = progress_re.match(stealth_div)[1]
+
+        return w
+
+    return i
+
+# Usage: i = get_item_stats(br, item_number)
+
+
+
+
 # async def get_rare_items():
 #     channel = client.get_channel('')
 #     cylinder_circulation = 0
