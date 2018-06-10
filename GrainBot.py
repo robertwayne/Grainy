@@ -8,9 +8,7 @@ import logging
 from Client import client
 import Commands
 
-# Create Discord client session
 ini = Configuration
-logging.basicConfig(level=logging.WARNING)
 
 
 @client.event
