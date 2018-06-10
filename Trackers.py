@@ -84,7 +84,7 @@ async def get_npc_health():
 
 
 # async def get_rare_items():
-#     channel = client.get_channel('448328096710656030')
+#     channel = client.get_channel('')
 #     cylinder_circulation = 0
 #
 #     # this shit needs to be iterated through...

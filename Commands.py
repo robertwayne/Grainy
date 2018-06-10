@@ -8,18 +8,6 @@ from Client import client
 ini = Configuration
 
 
-# @client.command(name='restart')
-# # this will restart the entire python script
-# async def reload(ctx):
-#     python = sys.executable
-#     channel = client.get_channel('448328096710656030')
-#     print('Restart command issued by: ' + ctx.author)
-#     print('Restarting now.')
-#     await client.send_message(channel, 'Restarting now!')
-#     await asyncio.sleep(1)
-#     os.execl(python, python, *sys.argv)
-
-
 async def reload_bot():
     python = sys.executable
     await asyncio.sleep(1)
