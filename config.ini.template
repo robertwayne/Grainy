@@ -14,9 +14,11 @@ LOGIN_URL = replaceme
 LAND_URL = replaceme
 UPDATE_RATE = replaceme
 ALERT_THRESHOLD = replaceme
-LOCALE_DATA = replaceme
+LOCALE_DATA = en_US.UTF-8
 EVERYONE_ALERT_THRESHOLD = replaceme
 PRICE_CSS_SELECTOR = replaceme
 
 [DISCORD-INFO]
-CHANNEL_ID = replaceme
+OMNIBOT_CHANNEL_ID = replaceme
+RAID_CHANNEL_ID = replaceme
+ELEVATED_ROLE_ID = replaceme
