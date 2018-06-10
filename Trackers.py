@@ -33,8 +33,9 @@ except SyntaxError:
 async def get_grain_price():
     previous_price = 0
 
+    await client.wait_until_ready()
     while not client.is_closed:
-        await client.wait_until_ready()
+        await asyncio.sleep(ini.UPDATE_RATE)
         br.open('{url}'.format(url=ini.LAND_URL))
         result = br.find('h2', {'class': '{pcs}'.format(pcs=ini.PRICE_CSS_SELECTOR)}).get_text()
         #global_tonnage = br.find()
@@ -70,8 +71,9 @@ async def get_npc_health():
     channel = client.get_channel(ini.RAID_CHANNEL_ID)
     previous_guard_hp = '670/670'
 
+    await client.wait_until_ready()
     while not client.is_closed:
-        await client.wait_until_ready()
+        await asyncio.sleep(1)
         br.open('https://www.zapoco.com/user/4')
         guard_hp = br.find(string=re.compile('670'))
 
