@@ -2,12 +2,10 @@ import grequests
 import asyncio
 import discord
 from robobrowser import RoboBrowser
-import Configuration
+import Configuration as ini
 import datetime
 import re
 from Client import client
-
-ini = Configuration
 
 
 # Build a session and submit log-in data upon initialization
@@ -18,11 +16,11 @@ headers = {
 session = grequests.Session()
 session.headers = headers
 br = RoboBrowser(session=session, parser='html.parser', history=True)
-br.open('{url}'.format(url=Configuration.LOGIN_URL))
+br.open('{url}'.format(url=ini.LOGIN_URL))
 
 form = br.get_form()
-form['username'] = '{usr}'.format(usr=Configuration.BOT_USERNAME)
-form['password'] = '{pwd}'.format(pwd=Configuration.BOT_PASSWORD)
+form['username'] = '{usr}'.format(usr=ini.BOT_USERNAME)
+form['password'] = '{pwd}'.format(pwd=ini.BOT_PASSWORD)
 try:
     br.submit_form(form)
 except SyntaxError:
