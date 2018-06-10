@@ -1,13 +1,11 @@
 #!/usr/bin/python
 from gevent import monkey; monkey.patch_socket()
-import Configuration
+import Configuration as ini
 import discord
 import asyncio
 from Client import client
 import Commands
 import Trackers
-
-ini = Configuration
 
 
 @client.event
@@ -30,7 +28,13 @@ async def on_ready():
     # this needs to be rewritten asynchronously... source of crash
     client.loop.create_task(Trackers.run_trackers())
 
-try:
-    client.run(ini.BOT_TOKEN)
-finally:
-    client.loop.close()
+
+def main():
+    try:
+        client.run(ini.BOT_TOKEN)
+    finally:
+        client.loop.close()
+
+
+if __name__ == '__main__':
+    main()
