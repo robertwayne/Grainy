@@ -5,6 +5,7 @@ from robobrowser import RoboBrowser
 import Configuration as ini
 import datetime
 import re
+import sys
 from Client import client
 
 
@@ -35,7 +36,7 @@ async def get_grain_price():
         await asyncio.sleep(ini.UPDATE_RATE)
         br.open('{url}'.format(url=ini.LAND_URL))
         result = br.find('h2', {'class': '{pcs}'.format(pcs=ini.PRICE_CSS_SELECTOR)}).get_text()
-        #global_tonnage = br.find()
+        # global_tonnage = br.find()
 
         # replace 'result' commas with whitespace and convert to a float
         r = result.replace(',', '')
@@ -81,10 +82,7 @@ async def get_npc_health():
         await asyncio.sleep(60)
 
 
-
-
-
-class item:
+class Item:
     item_type = ""
     value = 0
     in_circulation = 0
@@ -92,7 +90,8 @@ class item:
     def toS(self):
         return "{} {} {}".format(self.item_type, self.value, self.in_circulation)
 
-class weapon(item):
+
+class Weapon(Item):
     damage = 0
     accuracy = 0
     stealth = 0
@@ -115,13 +114,13 @@ def get_item_stats(browser, item_number):
     circulation_div = "{}".format(browser.select('h4.text-light.text-bold')[3]) # In Circulation
 
     # use regex to get the interesting data
-    i = item()
+    i = Item()
     i.item_type = type_re.match(type_div)[1]
     i.value = value_re.match(value_div)[2]
     i.in_circulation = value_re.match(circulation_div)[2]
 
-    if (i.item_type == 'Weapon'):
-        w = weapon()
+    if i.item_type == 'Weapon':
+        w = Weapon()
         w.super = i
 
         damage_div = "{}".format(browser.select('div.progress')[3]) # Damage
@@ -138,9 +137,6 @@ def get_item_stats(browser, item_number):
 
 # Usage: i = get_item_stats(br, item_number)
 
-
-
-
 # async def get_rare_items():
 #     channel = client.get_channel('')
 #     cylinder_circulation = 0
@@ -153,13 +149,11 @@ def get_item_stats(browser, item_number):
 #         result = br.find('h4', {'class': 'text-bold text-light'})
 
 
-
-
-
 # inventory parser: returns a dict with all items in inventory of the currently logged in player
 def parse_inventory(browser):
     browser.open('https://www.zapoco.com/inventory')
-    item_re = re.compile(r'<div class="pull-left pd-h-sm">\s*<a class="text-light text-strong" href="https://www.zapoco.com/item/(\d+)">(.*)</a> x(\d+)\s*</div>')
+    item_re = re.compile(r'<div class="pull-left pd-h-sm">\s*<a class="text-light text-strong" '
+                         r'href="https://www.zapoco.com/item/(\d+)">(.*)</a> x(\d+)\s*</div>')
 
     selection = browser.select('div.pull-left.pd-h-sm')
 
@@ -169,7 +163,7 @@ def parse_inventory(browser):
         # match item name, amount
         # no match -> no item
         match = item_re.match('{}'.format(div))
-        if match != None:
+        if match is not None:
             item_number = match[1]
             item = match[2]
             count = match[3]
@@ -178,31 +172,32 @@ def parse_inventory(browser):
     return inventory
 
 
-
-
 # land scraping code
 def get_land_stats(browser, acre_number):
     browser.open('https://www.zapoco.com/land/acre/{}'.format(acre_number))
-    user_re = re.compile(r'<span class="text-light">Owned by <a href="https://www.zapoco.com/user/\d+"><span[^>]*>(\w+).*</span></a> \(owns (\d+) acres\)</span>')
+    user_re = re.compile(r'<span class="text-light">Owned by '
+                         r'<a href="https://www.zapoco.com/user/\d+">'
+                         r'<span[^>]*>(\w+).*</span></a> \(owns (\d+) acres\)</span>')
     selection = browser.select('span.text-light')
 
-    if (selection == None or selection == []):
+    if selection is None or selection == []:
         # print('acre not owned')
         return None, 0
 
-    if acre_number in []: # list should contain all the lands that the bot owns (land numbers)
+    if acre_number in []:  # list should contain all the lands that the bot owns (land numbers)
         # print('Self owned')
-        return None, 0 # hard coded stats: the bot's name and the number of land it owns
+        return None, 0  # hard coded stats: the bot's name and the number of land it owns
 
     match = None
 
     for div in browser.select('span.text-light'):
         match = user_re.match('{}'.format(div))
-        if (match != None):
+        if match is not None:
             return '{}'.format(match[1]), '{}'.format(match[2])
 
     print('Something went wrong parsing acre {}'.format(acre_number))
     return None, 0
+
 
 def map_land_owners(browser, file=None):
     users = {}
@@ -211,9 +206,9 @@ def map_land_owners(browser, file=None):
 
     for acre in range(first, last+1):
         user, acres = get_land_stats(browser, acre)
-        if user != None and user not in users:
+        if user is not None and user not in users:
             users[user] = acres
-            if (file == None):
+            if file is None:
                 print('{} owns {} acres'.format(user, acres))
             else:
                 file.write('{}, {}\n'.format(user, acres))
@@ -222,15 +217,13 @@ def map_land_owners(browser, file=None):
 
     print('done')
 
+
 def scrape_lands(browser):
     try:
         file = open("acres.txt", 'w')
         map_land_owners(browser, file)
     finally:
         file.close()
-
-
-
 
 
 async def run_trackers():

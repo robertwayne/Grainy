@@ -4,7 +4,6 @@ import Configuration as ini
 import discord
 import asyncio
 from Client import client
-import Commands
 import Trackers
 
 
