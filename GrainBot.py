@@ -10,7 +10,7 @@ import Trackers
 import logging
 
 
-logging.basicConfig(level=logging.DEBUG, filename='/temp/crash.log')
+logging.basicConfig(level=logging.DEBUG, filename='./temp/crash.log')
 
 
 @client.event
