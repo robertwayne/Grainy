@@ -21,4 +21,5 @@ PRICE_CSS_SELECTOR = replaceme
 [DISCORD-INFO]
 OMNIBOT_CHANNEL_ID = replaceme
 RAID_CHANNEL_ID = replaceme
+DEV_CHANNEL_ID = replaceme
 ELEVATED_ROLE_ID = replaceme
