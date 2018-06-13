@@ -25,12 +25,16 @@ async def on_ready():
     print('-----------------------------------------')
     print('Tracking all sorts of shit...')
     # this needs to be rewritten asynchronously... source of crash
+    send_crash_report()
     client.loop.create_task(Trackers.run_trackers())
 
 
 def main():
     try:
         client.run(ini.BOT_TOKEN)
+    except Exception as e:
+        save_crash_report(e)
+        reload_bot()
     finally:
         client.loop.close()
 
