@@ -4,6 +4,8 @@ import Configuration as ini
 import discord
 import asyncio
 from Client import client
+import CrashReport
+from Commands import reload_bot
 import Trackers
 
 
@@ -25,7 +27,7 @@ async def on_ready():
     print('-----------------------------------------')
     print('Tracking all sorts of shit...')
     # this needs to be rewritten asynchronously... source of crash
-    send_crash_report()
+    await CrashReport.send_crash_report()
     client.loop.create_task(Trackers.run_trackers())
 
 
@@ -33,7 +35,7 @@ def main():
     try:
         client.run(ini.BOT_TOKEN)
     except Exception as e:
-        save_crash_report(e)
+        CrashReport.save_crash_report(e)
         reload_bot()
     finally:
         client.loop.close()

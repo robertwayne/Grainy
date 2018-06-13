@@ -1,5 +1,8 @@
 from Client import client
-import asyncio
+import Configuration as ini
+import traceback
+import os
+
 
 async def send_crash_report():
     channel = client.get_channel(ini.DEV_CHANNEL_ID)
@@ -14,7 +17,8 @@ async def send_crash_report():
         # File doesn't exist -> just ignore
         pass
 
-def save_crash_report(e):
+
+async def save_crash_report(e):
     with open('crash.log', 'w') as file:
-        file.write('{}'.format(e))
+        await file.write('{}'.format(e))
         traceback.print_exc(file=file)
