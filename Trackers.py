@@ -93,6 +93,86 @@ async def get_npc_health():
 #         result = br.find('h4', {'class': 'text-bold text-light'})
 
 
+
+
+
+# inventory parser: returns a dict with all items in inventory of the currently logged in player
+def parse_inventory(browser):
+    browser.open('https://www.zapoco.com/inventory')
+    item_re = re.compile(r'<div class="pull-left pd-h-sm">\s*<a class="text-light text-strong" href="https://www.zapoco.com/item/(\d+)">(.*)</a> x(\d+)\s*</div>')
+
+    selection = browser.select('div.pull-left.pd-h-sm')
+
+    inventory = {}
+
+    for div in selection:
+        # match item name, amount
+        # no match -> no item
+        match = item_re.match('{}'.format(div))
+        if match != None:
+            item_number = match[1]
+            item = match[2]
+            count = match[3]
+            inventory[item] = count # item's can't be listed twice so we don't have to check for duplicates
+
+    return inventory
+
+
+
+
+# land scraping code
+def get_land_stats(browser, acre_number):
+    browser.open('https://www.zapoco.com/land/acre/{}'.format(acre_number))
+    user_re = re.compile(r'<span class="text-light">Owned by <a href="https://www.zapoco.com/user/\d+"><span[^>]*>(\w+).*</span></a> \(owns (\d+) acres\)</span>')
+    selection = browser.select('span.text-light')
+
+    if (selection == None or selection == []):
+        # print('acre not owned')
+        return None, 0
+
+    if acre_number in []: # list should contain all the lands that the bot owns (land numbers)
+        # print('Self owned')
+        return None, 0 # hard coded stats: the bot's name and the number of land it owns
+
+    match = None
+
+    for div in browser.select('span.text-light'):
+        match = user_re.match('{}'.format(div))
+        if (match != None):
+            return '{}'.format(match[1]), '{}'.format(match[2])
+
+    print('Something went wrong parsing acre {}'.format(acre_number))
+    return None, 0
+
+def map_land_owners(browser, file=None):
+    users = {}
+    first = 1
+    last = 7882
+
+    for acre in range(first, last+1):
+        user, acres = get_land_stats(browser, acre)
+        if user != None and user not in users:
+            users[user] = acres
+            if (file == None):
+                print('{} owns {} acres'.format(user, acres))
+            else:
+                file.write('{}, {}\n'.format(user, acres))
+                sys.stdout.write('\r{}/{} done      '.format(acre, last-first+1))
+                sys.stdout.flush()
+
+    print('done')
+
+def scrape_lands(browser):
+    try:
+        file = open("acres.txt", 'w')
+        map_land_owners(browser, file)
+    finally:
+        file.close()
+
+
+
+
+
 async def run_trackers():
     await get_grain_price()
     await get_npc_health()
