@@ -10,9 +10,6 @@ import Trackers
 import logging
 
 
-logging.basicConfig(level=logging.DEBUG, filename='./temp/crash.log')
-
-
 @client.event
 async def on_member_join(member):
     # rewrite this to use config file and role ID's
@@ -39,7 +36,7 @@ def main():
     try:
         client.run(ini.BOT_TOKEN)
     except Exception as e:
-        logging.exception(e)
+        CrashReport.save_crash_report(e)
         reload_bot()
     finally:
         client.loop.close()
