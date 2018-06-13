@@ -7,6 +7,10 @@ from Client import client
 import CrashReport
 from Commands import reload_bot
 import Trackers
+import logging
+
+
+logging.basicConfig(level=logging.DEBUG, filename='/temp/crash.log')
 
 
 @client.event
@@ -35,7 +39,7 @@ def main():
     try:
         client.run(ini.BOT_TOKEN)
     except Exception as e:
-        CrashReport.save_crash_report(e)
+        logging.exception(e)
         reload_bot()
     finally:
         client.loop.close()

@@ -20,5 +20,5 @@ async def send_crash_report():
 
 async def save_crash_report(e):
     with open('crash.log', 'w') as file:
-        await file.write('{}'.format(e))
+        file.write('{}'.format(e))
         traceback.print_exc(file=file)
