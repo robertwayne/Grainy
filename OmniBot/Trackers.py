@@ -2,11 +2,11 @@ import grequests
 import asyncio
 import discord
 from robobrowser import RoboBrowser
-import Configuration as ini
+from OmniBot import Configuration as ini
 import datetime
 import re
 import sys
-from Client import client
+from OmniBot.Client import client
 
 
 # Build a session and submit log-in data upon initialization
@@ -100,8 +100,8 @@ class Weapon(Item):
         return "{} {} {} {}".format(self.super.toS(), self.damage, self.accuracy, self.stealth)
 
 
-def get_item_stats(browser, item_number):
-    browser.open('https://www.zapoco.com/item/{}'.format(item_number))
+def get_item_stats(item_number):
+    br.open('https://www.zapoco.com/item/{}'.format(item_number))
 
     # regexes for different types of data
     type_re = re.compile(r'<h4 class="text-bold text-light">(\w+)</h4>')
@@ -109,9 +109,9 @@ def get_item_stats(browser, item_number):
     progress_re = re.compile(r'<div class="progress" style="width:(\d+)%"></div>')
 
     # grab the correct html snippets, as strings
-    type_div = "{}".format(browser.select('h4.text-light.text-bold')[0]) # Type
-    value_div = "{}".format(browser.select('h4.text-light.text-bold')[1]) # Value
-    circulation_div = "{}".format(browser.select('h4.text-light.text-bold')[3]) # In Circulation
+    type_div = "{}".format(br.select('h4.text-light.text-bold')[0]) # Type
+    value_div = "{}".format(br.select('h4.text-light.text-bold')[1]) # Value
+    circulation_div = "{}".format(br.select('h4.text-light.text-bold')[3]) # In Circulation
 
     # use regex to get the interesting data
     i = Item()
@@ -123,9 +123,9 @@ def get_item_stats(browser, item_number):
         w = Weapon()
         w.super = i
 
-        damage_div = "{}".format(browser.select('div.progress')[3]) # Damage
-        accuracy_div = "{}".format(browser.select('div.progress')[4]) # Accuracy
-        stealth_div = "{}".format(browser.select('div.progress')[5]) # Stealth
+        damage_div = "{}".format(br.select('div.progress')[3]) # Damage
+        accuracy_div = "{}".format(br.select('div.progress')[4]) # Accuracy
+        stealth_div = "{}".format(br.select('div.progress')[5]) # Stealth
 
         w.damage = progress_re.match(damage_div)[1]
         w.accuracy = progress_re.match(accuracy_div)[1]
@@ -150,12 +150,12 @@ def get_item_stats(browser, item_number):
 
 
 # inventory parser: returns a dict with all items in inventory of the currently logged in player
-def parse_inventory(browser):
-    browser.open('https://www.zapoco.com/inventory')
+async def parse_inventory():
+    br.open('https://www.zapoco.com/inventory')
     item_re = re.compile(r'<div class="pull-left pd-h-sm">\s*<a class="text-light text-strong" '
                          r'href="https://www.zapoco.com/item/(\d+)">(.*)</a> x(\d+)\s*</div>')
 
-    selection = browser.select('div.pull-left.pd-h-sm')
+    selection = br.select('div.pull-left.pd-h-sm')
 
     inventory = {}
 
@@ -167,13 +167,14 @@ def parse_inventory(browser):
             item_number = match[1]
             item = match[2]
             count = match[3]
-            inventory[item] = count # item's can't be listed twice so we don't have to check for duplicates
+            inventory[item] = count  # item's can't be listed twice so we don't have to check for duplicates
 
+    print(inventory)
     return inventory
 
 
 # land scraping code
-def get_land_stats(browser, acre_number):
+async def get_land_stats(browser, acre_number):
     browser.open('https://www.zapoco.com/land/acre/{}'.format(acre_number))
     user_re = re.compile(r'<span class="text-light">Owned by '
                          r'<a href="https://www.zapoco.com/user/\d+">'

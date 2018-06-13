@@ -1,13 +1,10 @@
 #!/usr/bin/python
 from gevent import monkey; monkey.patch_socket()
-import Configuration as ini
 import discord
 import asyncio
-from Client import client
-import CrashReport
-from Commands import reload_bot
-import Trackers
-import logging
+from OmniBot.Client import client
+from OmniBot import CrashReport, Configuration as ini, Trackers
+from OmniBot.Commands import reload_bot
 
 
 @client.event

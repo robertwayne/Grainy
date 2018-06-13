@@ -1,5 +1,5 @@
-from Client import client
-import Configuration as ini
+from OmniBot.Client import client
+from OmniBot import Configuration as ini
 import traceback
 import os
 

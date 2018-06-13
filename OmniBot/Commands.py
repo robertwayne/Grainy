@@ -1,8 +1,9 @@
 import asyncio
 import sys
 import os
-import Configuration as ini
-from Client import client
+from OmniBot import Configuration as ini
+from OmniBot.Client import client
+from OmniBot.Trackers import parse_inventory
 
 
 async def reload_bot():
@@ -29,3 +30,9 @@ async def on_message(message):
         else:
             await client.send_message(channel, 'You do not have permission to use this command.')
             return
+
+    if message.content.startswith('!inventory'):
+        channel = client.get_channel('{cha}'.format(cha=ini.DEV_CHANNEL_ID))
+        print('DEBUG: Inventory command.')
+        i = await parse_inventory()
+        await client.send_message(channel, i)

@@ -2,8 +2,8 @@ import configparser
 
 
 config = configparser.ConfigParser()
-config.read('config.ini')
-#config.read('dev.ini')
+config.read('Configuration/config.ini')
+#config.read('Configuration/dev.ini')
 
 # Define variables from config.ini
 BOT_TOKEN = config.get('BOT-INFO', 'BOT_TOKEN')
