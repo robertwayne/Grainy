@@ -1,10 +1,8 @@
 import asyncio
 import sys
 import os
-import Configuration
+import Configuration as ini
 from Client import client
-
-ini = Configuration
 
 
 async def reload_bot():
