@@ -1,15 +1,23 @@
 import asyncio
 import sys
 import os
+import json
+import discord
 from OmniBot import Configuration as ini
 from OmniBot.Client import client
-from OmniBot.Trackers import parse_inventory
+from OmniBot.Trackers import parse_inventory, get_land_stats
 
 
 async def reload_bot():
     python = sys.executable
     await asyncio.sleep(1)
     os.execl(python, python, *sys.argv)
+
+
+async def write_inventory():
+    inventory = await parse_inventory()
+    r = json.dumps(inventory)
+    return r
 
 
 @client.event
@@ -31,8 +39,10 @@ async def on_message(message):
             await client.send_message(channel, 'You do not have permission to use this command.')
             return
 
-    if message.content.startswith('!inventory'):
+    if message.content.startswith('!stash'):
         channel = client.get_channel('{cha}'.format(cha=ini.DEV_CHANNEL_ID))
-        print('DEBUG: Inventory command.')
-        i = await parse_inventory()
-        await client.send_message(channel, i)
+        inv = await write_inventory()
+        em = discord.Embed(title="The Pad [7445]",
+                           url="https://www.zapoco.com/user/7445")
+        # NOT FINISHED WORK IN PROGRESS
+        await client.send_message(channel, 'JSON OUTPUT: ' + inv)
