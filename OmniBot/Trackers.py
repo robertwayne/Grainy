@@ -64,31 +64,34 @@ async def get_grain_price():
             previous_price = r
             await asyncio.sleep(ini.UPDATE_RATE)
 
-
 async def get_npc_health():
     channel = client.get_channel(ini.RAID_CHANNEL_ID)
     previous_guard_hp = '670/670'
+    previous_welder_hp = '90/90'
 
     await client.wait_until_ready()
     while not client.is_closed:
-        await asyncio.sleep(1)
-        br.open('https://www.zapoco.com/user/4')
-        guard_hp = br.find(string=re.compile('670'))
+        br.open('https://www.zapoco.com/user/1044')
+        welder_hp = br.find(string=re.compile('90'))
 
-        if guard_hp != '670/670' and guard_hp <= previous_guard_hp:
-            print('Guard Health: ' + guard_hp)
-            await client.send_message(channel, 'The Guard has been attacked! Current health: ' + guard_hp)
-            previous_guard_hp = guard_hp
-        await asyncio.sleep(60)
+        if welder_hp == '45/90' and welder_hp < previous_welder_hp:
+            print('Welder Health: ' + welder_hp)
+            await client.send_message(channel, 'Welder current health: ' + welder_hp)
+            previous_guard_hp = welder_hp
+            await asyncio.sleep(300)
+        await asyncio.sleep(10)
+
+
 
 
 class Item:
+    name = ''
     item_type = ""
     value = 0
     in_circulation = 0
 
     def toS(self):
-        return "{} {} {}".format(self.item_type, self.value, self.in_circulation)
+        return "{} {} {} {}".format(self.name, self.item_type, self.value, self.in_circulation)
 
 
 class Weapon(Item):
@@ -104,17 +107,21 @@ def get_item_stats(item_number):
     br.open('https://www.zapoco.com/item/{}'.format(item_number))
 
     # regexes for different types of data
+    name_re = re.compile(r'<h2><span class="text-light text-strong">(\w+)</span></h2>')
     type_re = re.compile(r'<h4 class="text-bold text-light">(\w+)</h4>')
     value_re = re.compile(r'<h4 class="text-bold text-light">(<i class="fa fa-medkit"></i> )??(\d+(,\d{3})*)</h4>')
     progress_re = re.compile(r'<div class="progress" style="width:(\d+)%"></div>')
 
     # grab the correct html snippets, as strings
-    type_div = "{}".format(br.select('h4.text-light.text-bold')[0]) # Type
-    value_div = "{}".format(br.select('h4.text-light.text-bold')[1]) # Value
-    circulation_div = "{}".format(br.select('h4.text-light.text-bold')[3]) # In Circulation
+    name_div = "{}".format(br.select('h2')[0])  # Name
+    type_div = "{}".format(br.select('h4.text-light.text-bold')[0])  # Type
+    value_div = "{}".format(br.select('h4.text-light.text-bold')[1])  # Value
+    circulation_div = "{}".format(br.select('h4.text-light.text-bold')[3])  # In Circulation
 
     # use regex to get the interesting data
     i = Item()
+    i.name = name_re.match(name_div)[1]
+    print(i.name)
     i.item_type = type_re.match(type_div)[1]
     i.value = value_re.match(value_div)[2]
     i.in_circulation = value_re.match(circulation_div)[2]
@@ -136,17 +143,6 @@ def get_item_stats(item_number):
     return i
 
 # Usage: i = get_item_stats(br, item_number)
-
-# async def get_rare_items():
-#     channel = client.get_channel('')
-#     cylinder_circulation = 0
-#
-#     # this shit needs to be iterated through...
-#     # tom why the fuck are all your css selectors the exact same name???
-#     while not client.is_closed:
-#         await asyncio.sleep(60)
-#         br.open('https://www.zapoco.com/item/120')
-#         result = br.find('h4', {'class': 'text-bold text-light'})
 
 
 # inventory parser: returns a dict with all items in inventory of the currently logged in player
@@ -229,5 +225,3 @@ def scrape_lands(browser):
 
 async def run_trackers():
     await get_grain_price()
-    await get_npc_health()
-    # await get_rare_items()

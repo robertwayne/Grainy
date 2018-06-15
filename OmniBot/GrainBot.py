@@ -4,8 +4,7 @@ import discord
 import asyncio
 from OmniBot.Client import client
 from OmniBot import CrashReport, Configuration as ini, Trackers
-from OmniBot.Commands import reload_bot
-
+import OmniBot.Commands
 
 @client.event
 async def on_member_join(member):
@@ -23,18 +22,22 @@ async def on_member_join(member):
 async def on_ready():
     print('Logged in as ' + client.user.name + ' (' + client.user.id + ')')
     print('-----------------------------------------')
-    print('Tracking all sorts of shit...')
+    print('Running...')
     # this needs to be rewritten asynchronously... source of crash
+    await client.change_presence(game=discord.Game(name='Use !help for commands'))
     await CrashReport.send_crash_report()
-    client.loop.create_task(Trackers.run_trackers())
+    client.loop.create_task(Trackers.get_npc_health())
+    #client.loop.create_task(Trackers.get_grain_price())
 
+def throw():
+    raise Exception('Forced crash.')
 
 def main():
     try:
         client.run(ini.BOT_TOKEN)
     except Exception as e:
         CrashReport.save_crash_report(e)
-        reload_bot()
+        client.reload_bot()
     finally:
         client.loop.close()
 
