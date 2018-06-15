@@ -19,7 +19,7 @@ async def reload_bot():
 
 async def write_inventory():
     inventory = await parse_inventory()
-    r = json.dumps(inventory, sort_keys=True, indent=4)
+    r = json.dumps(inventory, sort_keys=True, indent=0)
     # lol, I'm sure this can be done with a loop
     i = r.replace('"', '')
     j = i.replace('}', '')
@@ -73,7 +73,9 @@ async def help(ctx):
                        color=0x783e8e)
     em.add_field(name='!stash', value='Displays items in the safehouse stash.',inline=False)
     em.add_field(name='!item <item_#>', value='Displays the stats of an in-game item. (EXPERIMENTAL)', inline=False)
-    em.add_field(name='!restart', value='allows an elevated user to restart me.', inline=False)
+    em.add_field(name='!item request <item_#> <quantity>', value='Requests an item from the safehouse. (NOT IMPLEMENTED)', inline=False)
+    em.add_field(name='!item accept <user_id>', value='Allows an elevated user to accept a queued request. (NOT IMPLEMENTED)', inline=False)
+    em.add_field(name='!restart', value='Allows an elevated user to restart me.', inline=False)
 
     await client.say(embed=em)
 
@@ -82,7 +84,6 @@ async def help(ctx):
 @client.command(pass_context=True)
 async def item(ctx, arg1):
     item = get_item_stats(arg1)
-    print(item.item_type)
 
     em = discord.Embed(title=item.name,
                        color=0x783e8e)
