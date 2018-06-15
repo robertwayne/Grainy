@@ -87,8 +87,8 @@ async def item(ctx, arg1):
 
     em = discord.Embed(title=item.name,
                        color=0x783e8e)
-    em.add_field(name='Damage', value=item.damage, inline=False)
-    em.add_field(name='Accuracy', value=item.accuracy, inline=False)
-    em.add_field(name='Stealth', value=item.stealth, inline=False)
+    em.add_field(name='Damage', value=item['Damage'], inline=False)
+    em.add_field(name='Accuracy', value=item['Accuracy'], inline=False)
+    em.add_field(name='Stealth', value=item['Stealth'], inline=False)
 
     await client.say(embed=em)
