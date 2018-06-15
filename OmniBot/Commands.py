@@ -6,6 +6,10 @@ import discord
 from OmniBot import Configuration as ini
 from OmniBot.Client import client
 from OmniBot.Trackers import parse_inventory, get_land_stats
+from OmniBot.GrainBot import client
+from discord.ext import commands
+
+bot = commands.Bot(command_prefix="!")
 
 
 async def reload_bot():
@@ -16,8 +20,13 @@ async def reload_bot():
 
 async def write_inventory():
     inventory = await parse_inventory()
-    r = json.dumps(inventory)
-    return r
+    r = json.dumps(inventory, sort_keys=True, indent=4)
+    # lol, I'm sure this can be done with a loop
+    i = r.replace('"', '')
+    j = i.replace('}', '')
+    k = j.replace('{', '')
+    p = k.replace(',', '')
+    return p
 
 
 @client.event
@@ -40,9 +49,16 @@ async def on_message(message):
             return
 
     if message.content.startswith('!stash'):
-        channel = client.get_channel('{cha}'.format(cha=ini.DEV_CHANNEL_ID))
+        #channel = client.get_channel('{cha}'.format(cha=ini.DEV_CHANNEL_ID))
+        channel = message.channel
         inv = await write_inventory()
-        em = discord.Embed(title="The Pad [7445]",
-                           url="https://www.zapoco.com/user/7445")
+        em = discord.Embed(title="ThePad [7445]",
+                           url="https://www.zapoco.com/user/7445",
+                           color=0x783e8e)
         # NOT FINISHED WORK IN PROGRESS
-        await client.send_message(channel, 'JSON OUTPUT: ' + inv)
+        await client.send_message(channel, inv, embed=em)
+
+
+@bot.command()
+async def echo(message: str):
+    await client.say(message)

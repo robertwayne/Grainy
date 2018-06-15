@@ -4,7 +4,8 @@ import discord
 import asyncio
 from OmniBot.Client import client
 from OmniBot import CrashReport, Configuration as ini, Trackers
-from OmniBot.Commands import reload_bot
+import OmniBot.Commands
+from discord.ext import commands
 
 
 @client.event
@@ -28,13 +29,16 @@ async def on_ready():
     await CrashReport.send_crash_report()
     client.loop.create_task(Trackers.run_trackers())
 
+def throw():
+    raise Exception('Forced crash.')
 
 def main():
+
     try:
         client.run(ini.BOT_TOKEN)
     except Exception as e:
         CrashReport.save_crash_report(e)
-        reload_bot()
+        client.reload_bot()
     finally:
         client.loop.close()
 
