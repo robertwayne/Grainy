@@ -5,8 +5,6 @@ import asyncio
 from OmniBot.Client import client
 from OmniBot import CrashReport, Configuration as ini, Trackers
 import OmniBot.Commands
-from discord.ext import commands
-
 
 @client.event
 async def on_member_join(member):

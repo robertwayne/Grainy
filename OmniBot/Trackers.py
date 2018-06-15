@@ -229,5 +229,6 @@ def scrape_lands(browser):
 
 async def run_trackers():
     await get_grain_price()
+    # I don't think we get to this, so it never runs
     await get_npc_health()
-    # await get_rare_items()
+    print('debug: we made it to get_npc_health!')
