@@ -22,7 +22,7 @@ async def on_member_join(member):
 async def on_ready():
     print('Logged in as ' + client.user.name + ' (' + client.user.id + ')')
     print('-----------------------------------------')
-    print('Tracking all sorts of shit...')
+    print('Running...')
     # this needs to be rewritten asynchronously... source of crash
     await client.change_presence(game=discord.Game(name='Use !help for commands'))
     await CrashReport.send_crash_report()

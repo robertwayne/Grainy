@@ -5,9 +5,10 @@ import json
 import discord
 from OmniBot import Configuration as ini
 from OmniBot.Client import client
-from OmniBot.Trackers import parse_inventory, get_land_stats
+from OmniBot.Trackers import parse_inventory, get_item_stats
 from OmniBot.GrainBot import client
 from discord.ext import commands
+import OmniBot.Trackers
 
 
 async def reload_bot():
@@ -25,6 +26,10 @@ async def write_inventory():
     k = j.replace('{', '')
     p = k.replace(',', '')
     return p
+
+
+async def write_item(x):
+    return get_item_stats(x)
 
 
 @client.event
@@ -64,12 +69,25 @@ async def restart(ctx):
 
 @client.command(pass_context=True)
 async def help(ctx):
-    channel = ctx.message.author
-
     em = discord.Embed(title="OmniBot Help",
                        color=0x783e8e)
     em.add_field(name='!stash', value='Displays items in the safehouse stash.',inline=False)
-    em.add_field(name='!item <item_#>', value='Displays the stats of an in-game item.', inline=False)
+    em.add_field(name='!item <item_#>', value='Displays the stats of an in-game item. (EXPERIMENTAL)', inline=False)
     em.add_field(name='!restart', value='allows an elevated user to restart me.', inline=False)
+
+    await client.say(embed=em)
+
+
+# only works on weapons right now
+@client.command(pass_context=True)
+async def item(ctx, arg1):
+    item = get_item_stats(arg1)
+    print(item.item_type)
+
+    em = discord.Embed(title=item.name,
+                       color=0x783e8e)
+    em.add_field(name='Damage', value=item.damage, inline=False)
+    em.add_field(name='Accuracy', value=item.accuracy, inline=False)
+    em.add_field(name='Stealth', value=item.stealth, inline=False)
 
     await client.say(embed=em)

@@ -83,12 +83,13 @@ async def get_npc_health():
 
 
 class Item:
+    name = ""
     item_type = ""
     value = 0
     in_circulation = 0
 
     def toS(self):
-        return "{} {} {}".format(self.item_type, self.value, self.in_circulation)
+        return "{} {} {}".format(self.name, self.item_type, self.value, self.in_circulation)
 
 
 class Weapon(Item):
@@ -109,9 +110,9 @@ def get_item_stats(item_number):
     progress_re = re.compile(r'<div class="progress" style="width:(\d+)%"></div>')
 
     # grab the correct html snippets, as strings
-    type_div = "{}".format(br.select('h4.text-light.text-bold')[0]) # Type
-    value_div = "{}".format(br.select('h4.text-light.text-bold')[1]) # Value
-    circulation_div = "{}".format(br.select('h4.text-light.text-bold')[3]) # In Circulation
+    type_div = "{}".format(br.select('h4.text-light.text-bold')[0])  # Type
+    value_div = "{}".format(br.select('h4.text-light.text-bold')[1])  # Value
+    circulation_div = "{}".format(br.select('h4.text-light.text-bold')[3])  # In Circulation
 
     # use regex to get the interesting data
     i = Item()
@@ -136,17 +137,6 @@ def get_item_stats(item_number):
     return i
 
 # Usage: i = get_item_stats(br, item_number)
-
-# async def get_rare_items():
-#     channel = client.get_channel('')
-#     cylinder_circulation = 0
-#
-#     # this shit needs to be iterated through...
-#     # tom why the fuck are all your css selectors the exact same name???
-#     while not client.is_closed:
-#         await asyncio.sleep(60)
-#         br.open('https://www.zapoco.com/item/120')
-#         result = br.find('h4', {'class': 'text-bold text-light'})
 
 
 # inventory parser: returns a dict with all items in inventory of the currently logged in player
