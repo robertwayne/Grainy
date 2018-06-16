@@ -85,10 +85,9 @@ async def help(ctx):
 async def item(ctx, arg1):
     item = get_item_stats(arg1)
 
-    em = discord.Embed(title=item.name,
-                       color=0x783e8e)
+    em = discord.Embed(color=0x783e8e)
     em.add_field(name='Damage', value=item['Damage'], inline=False)
     em.add_field(name='Accuracy', value=item['Accuracy'], inline=False)
     em.add_field(name='Stealth', value=item['Stealth'], inline=False)
-
+    em.set_footer(text='Value: ' + str(item['Value']) + ' | Circulation: ' + str(item['Circulation']))
     await client.say(embed=em)
