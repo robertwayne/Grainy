@@ -71,7 +71,7 @@ async def help():
 
 # only works on weapons right now
 @client.command(pass_context=True)
-async def item(item_num):
+async def item(ctx, item_num):
     item = get_item_stats(item_num)
 
     if item:
