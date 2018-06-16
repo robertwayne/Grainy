@@ -87,7 +87,7 @@ async def item(ctx, item_num):
                 pass
             elif stat == 'Circulation':
                 pass
-            elif stat == 'Purchaseable':
+            elif stat == 'Purchasable':
                 pass
             elif stat:
                 em.add_field(name='{}'.format(stat), value=item[stat], inline=False)
