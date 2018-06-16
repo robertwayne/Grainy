@@ -2,9 +2,11 @@
 from gevent import monkey; monkey.patch_socket()
 import discord
 import asyncio
-from OmniBot.Client import client
-from OmniBot import CrashReport, Configuration as ini, Trackers
-import OmniBot.Commands
+from Client import client
+import CrashReport
+import Trackers
+import Configuration as ini
+
 
 @client.event
 async def on_member_join(member):

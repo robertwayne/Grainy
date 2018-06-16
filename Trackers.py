@@ -2,11 +2,11 @@ import grequests
 import asyncio
 import discord
 from robobrowser import RoboBrowser
-from OmniBot import Configuration as ini
+import Configuration as ini
 import datetime
 import re
 import sys
-from OmniBot.Client import client
+from Client import client
 
 
 # Build a session and submit log-in data upon initialization

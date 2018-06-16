@@ -3,12 +3,9 @@ import sys
 import os
 import json
 import discord
-from OmniBot import Configuration as ini
-from OmniBot.Client import client
-from OmniBot.Trackers import parse_inventory, get_item_stats
-from OmniBot.GrainBot import client
-from discord.ext import commands
-import OmniBot.Trackers
+import Configuration as ini
+from Trackers import parse_inventory, get_item_stats
+from GrainBot import client
 
 
 async def reload_bot():
