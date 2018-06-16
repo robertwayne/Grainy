@@ -53,7 +53,7 @@ async def stash():
 
 
 @client.command()
-async def restart(ctx):
+async def restart():
     channel = client.get_channel('{cha}'.format(cha=ini.OMNIBOT_CHANNEL_ID))
     if "{eid}".format(eid=ini.ELEVATED_ROLE_ID) in [role.id for role in client.message.author.roles]:
         await client.send_message(channel, 'Restarting now!')
@@ -65,7 +65,7 @@ async def restart(ctx):
 
 
 @client.command(pass_context=True)
-async def help(ctx):
+async def help():
     em = discord.Embed(title="OmniBot Help",
                        color=0x783e8e)
     em.add_field(name='!stash', value='Displays items in the safehouse stash.',inline=False)
@@ -79,7 +79,7 @@ async def help(ctx):
 
 # only works on weapons right now
 @client.command(pass_context=True)
-async def item(ctx, item_num):
+async def item(item_num):
     item = get_item_stats(item_num)
 
     if item:
@@ -102,4 +102,3 @@ async def item(ctx, item_num):
         await client.say(embed=em)
     else:
         await client.say('Item not found.')
-
