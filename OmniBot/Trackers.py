@@ -84,65 +84,68 @@ async def get_npc_health():
 
 
 
-class Item:
-    name = ''
-    item_type = ""
-    value = 0
-    in_circulation = 0
-
-    def toS(self):
-        return "{} {} {} {}".format(self.name, self.item_type, self.value, self.in_circulation)
-
-
-class Weapon(Item):
-    damage = 0
-    accuracy = 0
-    stealth = 0
-
-    def toS(self):
-        return "{} {} {} {}".format(self.super.toS(), self.damage, self.accuracy, self.stealth)
-
-
 def get_item_stats(item_number):
     br.open('https://www.zapoco.com/item/{}'.format(item_number))
 
+    item_data = {}
+
     # regexes for different types of data
-    name_re = re.compile(r'<h2><span class="text-light text-strong">(\w+)</span></h2>')
-    type_re = re.compile(r'<h4 class="text-bold text-light">(\w+)</h4>')
-    value_re = re.compile(r'<h4 class="text-bold text-light">(<i class="fa fa-medkit"></i> )??(\d+(,\d{3})*)</h4>')
-    progress_re = re.compile(r'<div class="progress" style="width:(\d+)%"></div>')
+    stat_re = re.compile(r'<div class="col-4 space-2">\s*<p>(\w+)</p>\s*<div class="progress-bar"><div class="progress" style="width:(.*)%"></div>\s*</div>\s*</div>')
+    info_re = re.compile(r'<div class="col-3">\s*<h4 class="text-bold text-light">(.*)</h4>\s*<p>(.*)</p>\s*</div>')
+    value_re = re.compile(r'<i class="fa fa-medkit"></i>(.*)')
+    check_re = re.compile(r'<i class="fa fa-check"></i>')
 
     # grab the correct html snippets, as strings
-    name_div = "{}".format(br.select('h2')[0])  # Name
-    type_div = "{}".format(br.select('h4.text-light.text-bold')[0])  # Type
-    value_div = "{}".format(br.select('h4.text-light.text-bold')[1])  # Value
-    circulation_div = "{}".format(br.select('h4.text-light.text-bold')[3])  # In Circulation
+    stat_divs = br.select('div.col-4.space-2')
+    info_divs = br.select('div.col-3')
 
-    # use regex to get the interesting data
-    i = Item()
-    i.name = name_re.match(name_div)[1]
-    print(i.name)
-    i.item_type = type_re.match(type_div)[1]
-    i.value = value_re.match(value_div)[2]
-    i.in_circulation = value_re.match(circulation_div)[2]
+    # print(info_divs)
+    for div in info_divs:
+        match = info_re.match("{}".format(div))
+        if match is not None:
+            info = match[2]
+            value = match[1]
+            if (info == "Value"):
+                value = int(value_re.match(value)[1].replace(',',''))
+            elif (info == "Purchasable"):
+                if check_re.match(value) is None:
+                    value = 'Yes'
+                else:
+                    value = 'No'
+            elif (info == "In Circulation"):
+                info = 'Circulation'
+                value = int(value.replace(',',''))
 
-    if i.item_type == 'Weapon':
-        w = Weapon()
-        w.super = i
+            item_data[info] = value
+            # print('{}: {}'.format(info, value))
 
-        damage_div = "{}".format(br.select('div.progress')[3]) # Damage
-        accuracy_div = "{}".format(br.select('div.progress')[4]) # Accuracy
-        stealth_div = "{}".format(br.select('div.progress')[5]) # Stealth
+    # hard coded bot max stats; used for normalization
+    bot_eng = 100
+    bot_nerve = 10
+    bot_hap = 100
+    bot_life = 100
 
-        w.damage = progress_re.match(damage_div)[1]
-        w.accuracy = progress_re.match(accuracy_div)[1]
-        w.stealth = progress_re.match(stealth_div)[1]
+    # print(stat_divs)
+    for div in stat_divs:
+        # print(div)
+        match = stat_re.match("{}".format(div))
+        if match is not None:
+            stat = match[1]
+            value = float(match[2])
+            if (stat == "Energy"):
+                value = round(value * bot_eng / 100)
+            elif (stat == "Nerve"):
+                value = round(value * bot_nerve / 100)
+            elif (stat == "Happy"):
+                value = round(value * bot_hap / 100)
+            elif (stat == "Life"):
+                value = round(value * bot_life / 100)
+            item_data[stat] = value
+            # print('{}: {}'.format(stat, value))
 
-        return w
+    print(item_data)
+    return item_data
 
-    return i
-
-# Usage: i = get_item_stats(br, item_number)
 
 
 # inventory parser: returns a dict with all items in inventory of the currently logged in player
