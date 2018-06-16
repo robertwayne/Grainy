@@ -28,7 +28,7 @@ async def on_ready():
     # this needs to be rewritten asynchronously... source of crash
     await client.change_presence(game=discord.Game(name='Use !help for commands'))
     await CrashReport.send_crash_report()
-    client.loop.create_task(Trackers.get_npc_health()) and client.loop.create_task(Trackers.get_grain_price())
+    client.loop.create_task(Trackers.get_grain_price())
 
 
 def main():
