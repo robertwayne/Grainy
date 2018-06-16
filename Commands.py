@@ -4,8 +4,8 @@ import os
 import json
 import discord
 import Configuration as ini
-from Trackers import parse_inventory, get_item_stats
-from GrainBot import client
+from Trackers import parse_inventory, get_item_stats, get_item_name
+from Client import client
 
 
 async def reload_bot():
@@ -79,12 +79,27 @@ async def help(ctx):
 
 # only works on weapons right now
 @client.command(pass_context=True)
-async def item(ctx, arg1):
-    item = get_item_stats(arg1)
+async def item(ctx, item_num):
+    item = get_item_stats(item_num)
 
-    em = discord.Embed(color=0x783e8e)
-    em.add_field(name='Damage', value=item['Damage'], inline=False)
-    em.add_field(name='Accuracy', value=item['Accuracy'], inline=False)
-    em.add_field(name='Stealth', value=item['Stealth'], inline=False)
-    em.set_footer(text='Value: ' + str(item['Value']) + ' | Circulation: ' + str(item['Circulation']))
-    await client.say(embed=em)
+    if item:
+        name = get_item_name(item_num)
+        em = discord.Embed(title=name + ' | ' + item['Type'],
+                           url='https://www.zapoco.com/item/{}'.format(item_num),
+                           color=0x783e8e)
+        em.set_footer(text='Value: ' + str(item['Value']) + ' | Circulation: ' + str(item['Circulation']))
+        for stat in item:
+            if stat == 'Value':
+                pass
+            elif stat == 'Type':
+                pass
+            elif stat == 'Circulation':
+                pass
+            elif stat == 'Purchaseable':
+                pass
+            elif stat:
+                em.add_field(name='{}'.format(stat), value=item[stat], inline=False)
+        await client.say(embed=em)
+    else:
+        await client.say('Item not found.')
+

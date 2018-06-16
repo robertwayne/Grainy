@@ -64,6 +64,7 @@ async def get_grain_price():
             previous_price = r
             await asyncio.sleep(ini.UPDATE_RATE)
 
+
 async def get_npc_health():
     channel = client.get_channel(ini.RAID_CHANNEL_ID)
     previous_guard_hp = '670/670'
@@ -82,13 +83,22 @@ async def get_npc_health():
         await asyncio.sleep(10)
 
 
+def get_item_name(item_number):
+    br.open('https://www.zapoco.com/item/{}'.format(item_number))
+    item_name = ''
+
+    name_re = re.compile(r'<h2><span class="text-light text-strong">(.*)</span></h2>')
+    name_div = "{}".format(br.select('h2')[0])  # Name
+    item_name = name_re.match(name_div)[1]
+    return item_name
+
+
 def get_item_stats(item_number):
     br.open('https://www.zapoco.com/item/{}'.format(item_number))
 
     item_data = {}
 
     # regexes for different types of data
-    name_re = re.compile(r'')
     stat_re = re.compile(r'<div class="col-4 space-2">\s*<p>(\w+)</p>\s*<div class="progress-bar"><div class="progress" style="width:(.*)%"></div>\s*</div>\s*</div>')
     info_re = re.compile(r'<div class="col-3">\s*<h4 class="text-bold text-light">(.*)</h4>\s*<p>(.*)</p>\s*</div>')
     value_re = re.compile(r'<i class="fa fa-medkit"></i>(.*)')
@@ -144,7 +154,6 @@ def get_item_stats(item_number):
 
     print(item_data)
     return item_data
-
 
 
 # inventory parser: returns a dict with all items in inventory of the currently logged in player

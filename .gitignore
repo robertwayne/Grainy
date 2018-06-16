@@ -70,3 +70,4 @@ target/
 
 # Personal sublime workspaces
 *.sublime-workspace
+secret\.json
