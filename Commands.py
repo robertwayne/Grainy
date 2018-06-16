@@ -4,6 +4,7 @@ import os
 import json
 import discord
 import Configuration as ini
+from discord.ext import commands
 from Trackers import parse_inventory, get_item_stats, get_item_name
 from Client import client
 
@@ -39,11 +40,6 @@ async def on_message(message):
 
 
 @client.command()
-async def test():
-    await client.say('Test')
-
-
-@client.command()
 async def stash():
     inv = await write_inventory()
     em = discord.Embed(title="ThePad [7445]",
@@ -53,14 +49,11 @@ async def stash():
 
 
 @client.command()
+@commands.has_role('Nightcrawlers')
 async def restart():
-    if "{eid}".format(eid=ini.ELEVATED_ROLE_ID) in [role.id for role in client.message.author.roles]:
-        await client.say('Restarting now!')
-        print('Restarting...')
-        await reload_bot()
-    else:
-        await client.say('You do not have permission to use this command.')
-        return
+    await client.say('Restarting now!')
+    print('Restarting...')
+    await reload_bot()
 
 
 @client.command(pass_context=True)
