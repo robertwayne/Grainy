@@ -54,9 +54,8 @@ async def stash():
 
 @client.command()
 async def restart():
-    channel = client.get_channel('{cha}'.format(cha=ini.OMNIBOT_CHANNEL_ID))
     if "{eid}".format(eid=ini.ELEVATED_ROLE_ID) in [role.id for role in client.message.author.roles]:
-        await client.send_message(channel, 'Restarting now!')
+        await client.say('Restarting now!')
         print('Restarting...')
         await reload_bot()
     else:
