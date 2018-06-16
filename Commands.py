@@ -69,7 +69,7 @@ async def help(ctx):
     em = discord.Embed(title="OmniBot Help",
                        color=0x783e8e)
     em.add_field(name='!stash', value='Displays items in the safehouse stash.',inline=False)
-    em.add_field(name='!item <item_#>', value='Displays the stats of an in-game item. (EXPERIMENTAL)', inline=False)
+    em.add_field(name='!item <item_#>', value='Displays the stats of an in-game item.', inline=False)
     em.add_field(name='!item request <item_#> <quantity>', value='Requests an item from the safehouse. (NOT IMPLEMENTED)', inline=False)
     em.add_field(name='!item accept <user_id>', value='Allows an elevated user to accept a queued request. (NOT IMPLEMENTED)', inline=False)
     em.add_field(name='!restart', value='Allows an elevated user to restart me.', inline=False)
