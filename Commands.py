@@ -105,6 +105,7 @@ async def land(ctx):
     em.add_field(name='Unowned: ', value=str(land['unowned']))
     em.add_field(name='Owned (Farms): ', value=str(land['owned_grain']))
     em.add_field(name='Owned (Buildings): ', value=str(land['owned_building']))
-    em.set_footer(text='Total Owned: ' + str(land['total_owned']) + ' | ' + 'Total: ' + str(land['total']))
+    em.set_footer(text='Total Owned: ' + str(land['total_owned']) + ' | Total:' + str(land['total']) +
+                  ' | Remaining Land: ' + str((land['total']) - land['total_owned']))
 
     await client.say(embed=em)
