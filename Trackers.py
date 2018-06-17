@@ -181,7 +181,7 @@ async def parse_inventory():
 
 
 # land scraping code
-def get_land_counts(br):
+def get_land_counts():
     br.open('https://www.zapoco.com/land')
 
     unowned = 0
