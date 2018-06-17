@@ -181,6 +181,32 @@ async def parse_inventory():
 
 
 # land scraping code
+def get_land_counts(br):
+    br.open('https://www.zapoco.com/land')
+
+    unowned = 0
+    owned_grain = 0
+    owned_building = 0
+
+    acre_re = re.compile(r'<ellipse class="acre.*" cx=".*" cy=".*" fill="#(.*)" id="acre-(\d+)" rx=".*" ry=".*"></ellipse>')
+    acre_divs = br.select('ellipse.acre')
+
+    for div in acre_divs:
+        match = acre_re.match('{}'.format(div))
+
+        if match is not None:
+            acre_id = int(match[2])
+            colour = match[1]
+            if colour == "ba8a5e": # orange
+                owned_grain += 1
+            elif colour == "07a0ef": # blue
+                owned_building += 1
+            elif colour == "6c6c6c": # grey
+                unowned += 1
+
+    return {'unowned': unowned, "owned_grain": owned_grain, "owned_building": owned_building, "total_owned": owned_grain+owned_building, "total": unowned+owned_grain+owned_building}
+
+
 async def get_land_stats(browser, acre_number):
     browser.open('https://www.zapoco.com/land/acre/{}'.format(acre_number))
     user_re = re.compile(r'<span class="text-light">Owned by '
