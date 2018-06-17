@@ -5,7 +5,7 @@ import json
 import discord
 import Configuration as ini
 from discord.ext import commands
-from Trackers import parse_inventory, get_item_stats, get_item_name
+from Trackers import parse_inventory, get_item_stats, get_item_name, get_land_counts
 from Client import client
 
 
@@ -62,6 +62,7 @@ async def help():
                        color=0x783e8e)
     em.add_field(name='!stash', value='Displays items in the safehouse stash.',inline=False)
     em.add_field(name='!item <item_#>', value='Displays the stats of an in-game item.', inline=False)
+    em.add_field(name='!land', value='Displays general land ownership statistics.', inline=False)
     em.add_field(name='!item request <item_#> <quantity>', value='Requests an item from the safehouse. (NOT IMPLEMENTED)', inline=False)
     em.add_field(name='!item accept <user_id>', value='Allows an elevated user to accept a queued request. (NOT IMPLEMENTED)', inline=False)
     em.add_field(name='!restart', value='Allows an elevated user to restart me.', inline=False)
@@ -94,3 +95,16 @@ async def item(ctx, item_num):
         await client.say(embed=em)
     else:
         await client.say('Item not found.')
+
+
+@client.command(pass_context=True)
+async def land(ctx):
+    land = get_land_counts()
+    em = discord.Embed(title='Land Stats',
+                       color=0x783e8e)
+    em.add_field(name='Unowned: ', value=str(land['unowned']))
+    em.add_field(name='Owned (Farms): ', value=str(land['owned_grain']))
+    em.add_field(name='Owned (Buildings): ', value=str(land['owned_building']))
+    em.set_footer(text='Total Owned: ' + str(land['total_owned']) + ' | ' + 'Total: ' + str(land['total']))
+
+    await client.say(embed=em)
