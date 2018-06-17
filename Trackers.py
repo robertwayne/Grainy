@@ -131,7 +131,7 @@ def get_item_stats(item_number):
     # hard coded bot max stats; used for normalization
     bot_eng = 100
     bot_nerve = 10
-    bot_hap = 100
+    bot_hap = 5750
     bot_life = 100
 
     # print(stat_divs)
