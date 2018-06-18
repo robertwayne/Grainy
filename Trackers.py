@@ -67,7 +67,6 @@ async def get_grain_price():
 
 async def get_npc_health():
     channel = client.get_channel(ini.RAID_CHANNEL_ID)
-    previous_guard_hp = '670/670'
     previous_welder_hp = '90/90'
 
     await client.wait_until_ready()
@@ -78,7 +77,7 @@ async def get_npc_health():
         if welder_hp == '45/90' and welder_hp < previous_welder_hp:
             print('Welder Health: ' + welder_hp)
             await client.send_message(channel, 'Welder current health: ' + welder_hp)
-            previous_guard_hp = welder_hp
+            previous_welder_hp = welder_hp
             await asyncio.sleep(300)
         await asyncio.sleep(10)
 
@@ -114,16 +113,16 @@ def get_item_stats(item_number):
         if match is not None:
             info = match[2]
             value = match[1]
-            if (info == "Value"):
-                value = int(value_re.match(value)[1].replace(',',''))
-            elif (info == "Purchasable"):
+            if info == "Value":
+                value = int(value_re.match(value)[1].replace(',', ''))
+            elif info == "Purchasable":
                 if check_re.match(value) is None:
                     value = 'Yes'
                 else:
                     value = 'No'
-            elif (info == "In Circulation"):
+            elif info == "In Circulation":
                 info = 'Circulation'
-                value = int(value.replace(',',''))
+                value = int(value.replace(',', ''))
 
             item_data[info] = value
             # print('{}: {}'.format(info, value))
@@ -141,19 +140,25 @@ def get_item_stats(item_number):
         if match is not None:
             stat = match[1]
             value = float(match[2])
-            if (stat == "Energy"):
+            if stat == "Energy":
                 value = round(value * bot_eng / 100)
-            elif (stat == "Nerve"):
+            elif stat == "Nerve":
                 value = round(value * bot_nerve / 100)
-            elif (stat == "Happy"):
+            elif stat == "Happy":
                 value = round(value * bot_hap / 100)
-            elif (stat == "Life"):
+            elif stat == "Life":
                 value = round(value * bot_life / 100)
             item_data[stat] = value
             # print('{}: {}'.format(stat, value))
 
     print(item_data)
     return item_data
+
+
+async def get_vehicle_stats(vehicle_number):
+    br.open('https://www.zapoco.com/vehicle/{}'.format(vehicle_number))
+
+    vehicle_data = {}
 
 
 # inventory parser: returns a dict with all items in inventory of the currently logged in player
@@ -197,11 +202,11 @@ def get_land_counts():
         if match is not None:
             acre_id = int(match[2])
             colour = match[1]
-            if colour == "ba8a5e": # orange
+            if colour == "ba8a5e":  # orange
                 owned_grain += 1
-            elif colour == "07a0ef": # blue
+            elif colour == "07a0ef":  # blue
                 owned_building += 1
-            elif colour == "6c6c6c": # grey
+            elif colour == "6c6c6c":  # grey
                 unowned += 1
 
     return {'unowned': unowned, "owned_grain": owned_grain, "owned_building": owned_building, "total_owned": owned_grain+owned_building, "total": unowned+owned_grain+owned_building}
