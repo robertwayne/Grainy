@@ -6,7 +6,7 @@ import discord
 import Configuration as ini
 from discord.ext import commands
 from Trackers import parse_inventory, get_item_stats, get_item_name, get_land_counts, update_lands_db
-from Client import client, dt
+from Client import client, timestamp
 from Database import conn
 
 
