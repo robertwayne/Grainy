@@ -5,9 +5,9 @@ import json
 import discord
 import Configuration as ini
 from discord.ext import commands
-from Trackers import parse_inventory, get_item_stats, get_item_name, get_land_counts
-from Client import client
-from Database import db, conn
+from Trackers import parse_inventory, get_item_stats, get_item_name, get_land_counts, update_lands_db
+from Client import client, dt
+from Database import conn
 
 
 async def reload_bot():
@@ -123,6 +123,11 @@ async def land(ctx):
     await client.say(embed=em)
 
 
+@client.command(pass_context=True)
+async def landDB(ctx):
+    sql = "SELECT "
+
+
 # @client.command(pass_context=True)
 # @commands.has_role('The Brains')
 # async def db_parse_items(ctx, i_num):
@@ -142,3 +147,10 @@ async def land(ctx):
 #     conn.commit()
 #     db.close()
 #     await client.say('Inserted data into omnidb.')
+
+
+# Force a land update in the database by calling the update_land_db() function
+@client.command(pass_context=True)
+@commands.has_role('The Brains')
+async def db_write_land(ctx):
+    update_lands_db()
