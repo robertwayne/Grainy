@@ -96,14 +96,22 @@ def get_item_stats(item_number):
     item_data = {}
 
     # regexes for different types of data
+    name_re = re.compile(r'<h2><span class="text-light text-strong">(.*)</span></h2>')
     stat_re = re.compile(r'<div class="col-4 space-2">\s*<p>(\w+)</p>\s*<div class="progress-bar"><div class="progress" style="width:(.*)%"></div>\s*</div>\s*</div>')
     info_re = re.compile(r'<div class="col-3">\s*<h4 class="text-bold text-light">(.*)</h4>\s*<p>(.*)</p>\s*</div>')
     value_re = re.compile(r'<i class="fa fa-medkit"></i>(.*)')
     check_re = re.compile(r'<i class="fa fa-check"></i>')
 
     # grab the correct html snippets, as strings
+    name_div = br.select('h2') # Name is the first one
     stat_divs = br.select('div.col-4.space-2')
     info_divs = br.select('div.col-3')
+
+    if len(name_div) > 0:
+        "{}".format(name_div[0])
+        match = name_re.match(name_div)
+        if match is not None:
+            item_data['name'] = match[1]
 
     # print(info_divs)
     for div in info_divs:
@@ -156,7 +164,35 @@ def get_item_stats(item_number):
 def get_vehicle_stats(vehicle_number):
     br.open('https://www.zapoco.com/vehicle/{}'.format(vehicle_number))
 
-    vehicle_data = {}
+    veh_data = {}
+
+    # regexes for different types of data
+    name_re = re.compile(r'<h2><span class="text-light text-strong">(.*)</span></h2>')
+    stat_re = re.compile(r'<div class="col-4">\s*<p>(\w+)</p>\s*<div class="progress-bar"><div class="progress" style="width:(.*)%"></div>\s*</div>\s*</div>')
+
+    # grab the correct html snippets, as strings
+    name_div = "{}".format(br.select('h2')[0])  # Name
+    stat_divs = br.select('div.col-4')
+
+    veh_data['name'] = name_re.match(name_div)[1]
+
+    # print(stat_divs)
+    for div in stat_divs:
+        # print(div)
+        match = stat_re.match("{}".format(div))
+        if match is not None:
+            stat = match[1]
+            value = int(match[2])
+            if (stat == "Speed"):
+                value = value / 10
+            elif (stat == "Comfort"):
+                value = value / 10
+            veh_data[stat] = value
+            # print('{}: {}'.format(stat, value))
+
+    print(veh_data)
+    return veh_data
+
 
 
 # inventory parser: returns a dict with all items in inventory of the currently logged in player
