@@ -306,9 +306,3 @@ async def update_lands_db():
     asyncio.sleep(3600)
 
 
-async def parse_item_list():
-    n = 166
-    stats = get_item_stats(n)
-    for n in range(0, n):
-        sql = "INSERT INTO `items` "
-
