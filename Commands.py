@@ -5,7 +5,7 @@ import json
 import discord
 import Configuration as ini
 from discord.ext import commands
-from Trackers import parse_inventory, get_item_stats, get_item_name, get_land_counts, update_lands_db
+from Trackers import parse_inventory, get_item_stats, get_land_counts, update_lands_db, get_vehicle_stats
 from Client import client, timestamp
 from Database import conn
 
@@ -72,15 +72,15 @@ async def help():
 @client.command(pass_context=True)
 async def item(ctx, item_num):
     item = get_item_stats(item_num)
-
     if item:
-        name = get_item_name(item_num)
-        em = discord.Embed(title=name + ' | ' + item['Type'],
+        em = discord.Embed(title=item['Name'] + ' | ' + item['Type'],
                            url='https://www.zapoco.com/item/{}'.format(item_num),
                            color=0x783e8e)
         em.set_footer(text='Value: ' + str(item['Value']) + ' | Circulation: ' + str(item['Circulation']))
         for stat in item:
-            if stat == 'Value':
+            if stat == 'Name':
+                pass
+            elif stat == 'Value':
                 pass
             elif stat == 'Type':
                 pass
@@ -94,20 +94,23 @@ async def item(ctx, item_num):
     else:
         await client.say('Item not found.')
 
-# prints a vehicles statistics to chat (WAITING ON GET_VEHICLE_STATS() IMPLEMENTATION)
-# @client.command(pass_context=True)
-# async def vehicle(ctx, vehicle_num):
-#     vehicle = get_vehicle_stats(vehicle_num)
-#     name = get_vehicle_name(vehicle_num)
-#     if vehicle:
-#         em = discord.Embed(title=name + ' | Vehicle',
-#                          url='https://www.zapoco.com/vehicle/{}'.format(vehicle_num),
-#                          color=0x783e8e)
-#         for stat in vehicle:
-#             em.add_field(name='{}'.format(stat), value=vehicle[stat], inline=False)
-#         await client.say(embed=em)
-#     else:
-#         await client.say('Vehicle not found.')
+
+# prints a vehicles statistics to chat
+@client.command(pass_context=True)
+async def vehicle(ctx, vehicle_num):
+    vehicle = get_vehicle_stats(vehicle_num)
+    if vehicle:
+        em = discord.Embed(title=vehicle['Name'] + ' | Vehicle',
+                         url='https://www.zapoco.com/vehicle/{}'.format(vehicle_num),
+                         color=0x783e8e)
+        for stat in vehicle:
+            if stat == 'Name':
+                pass
+            elif stat:
+                em.add_field(name='{}'.format(stat), value=vehicle[stat], inline=False)
+        await client.say(embed=em)
+    else:
+        await client.say('Vehicle not found.')
 
 
 @client.command(pass_context=True)

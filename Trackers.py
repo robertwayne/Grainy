@@ -80,16 +80,6 @@ async def get_npc_health():
         await asyncio.sleep(10)
 
 
-def get_item_name(item_number):
-    br.open('https://www.zapoco.com/item/{}'.format(item_number))
-    item_name = ''
-
-    name_re = re.compile(r'<h2><span class="text-light text-strong">(.*)</span></h2>')
-    name_div = "{}".format(br.select('h2')[0])  # Name
-    item_name = name_re.match(name_div)[1]
-    return item_name
-
-
 def get_item_stats(item_number):
     br.open('https://www.zapoco.com/item/{}'.format(item_number))
 
@@ -108,10 +98,9 @@ def get_item_stats(item_number):
     info_divs = br.select('div.col-3')
 
     if len(name_div) > 0:
-        "{}".format(name_div[0])
-        match = name_re.match(name_div)
+        match = name_re.match("{}".format(name_div[0]))
         if match is not None:
-            item_data['name'] = match[1]
+            item_data['Name'] = match[1]
 
     # print(info_divs)
     for div in info_divs:
@@ -174,7 +163,12 @@ def get_vehicle_stats(vehicle_number):
     name_div = "{}".format(br.select('h2')[0])  # Name
     stat_divs = br.select('div.col-4')
 
-    veh_data['name'] = name_re.match(name_div)[1]
+    veh_data['Name'] = name_re.match(name_div)[1]
+    # if len(name_div) > 0:
+    #     match = name_re.match("{}")
+    #     if match is not None:
+    #         veh_data['Name'] = match[1]
+
 
     # print(stat_divs)
     for div in stat_divs:
