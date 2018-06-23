@@ -153,4 +153,4 @@ async def landDB(ctx):
 @client.command(pass_context=True)
 @commands.has_role('The Brains')
 async def db_write_land(ctx):
-    update_lands_db()
+    await update_lands_db()

@@ -29,8 +29,11 @@ async def on_ready():
     # this needs to be rewritten asynchronously... source of crash
     await client.change_presence(game=discord.Game(name='Use !help for commands'))
     await CrashReport.send_crash_report()
-    client.loop.create_task(Trackers.run_trackers())
-
+    try:
+        await client.loop.run_until_complete(asyncio.wait(await Trackers.get_grain_price()))
+    except Exception as e:
+        CrashReport.save_crash_report(e)
+        client.reload_bot()
     # loop = asyncio.get_event_loop()
     # tracker = loop.create_task(Trackers.run_trackers())
     # tracker.add_done_callback(results)

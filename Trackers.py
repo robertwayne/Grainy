@@ -32,7 +32,6 @@ except SyntaxError:
 async def get_grain_price():
     previous_price = 0
 
-    await client.wait_until_ready()
     while not client.is_closed:
         await asyncio.sleep(ini.UPDATE_RATE)
         br.open('{url}'.format(url=ini.LAND_URL))
@@ -44,7 +43,7 @@ async def get_grain_price():
         price = (float(r))
 
         if price > ini.EVERYONE_ALERT_THRESHOLD and previous_price != r:
-            print(timestamp + ': ' + '@everyone Grain Price: ' + r)
+            print(str(timestamp) + ': ' + '@everyone Grain Price: ' + r)
             em = discord.Embed(title="Grain Alert",
                                url="https://www.zapoco.com/land/grain",
                                description="**Price: " + r + "**",
@@ -54,7 +53,7 @@ async def get_grain_price():
             previous_price = r
             await asyncio.sleep(ini.UPDATE_RATE)
         elif price > ini.ALERT_THRESHOLD and previous_price != r:
-            print(timestamp + ': ' + 'Grain Price: ' + r)
+            print(str(timestamp) + ': ' + 'Grain Price: ' + r)
             em = discord.Embed(title="Grain Alert",
                                url="https://www.zapoco.com/land/grain",
                                description="**Price: " + r + "**",
@@ -69,7 +68,6 @@ async def get_npc_health():
     channel = client.get_channel(ini.RAID_CHANNEL_ID)
     previous_welder_hp = '90/90'
 
-    await client.wait_until_ready()
     while not client.is_closed:
         br.open('https://www.zapoco.com/user/1044')
         welder_hp = br.find(string=re.compile('90'))
@@ -98,7 +96,7 @@ def get_item_stats(item_number):
     item_data = {}
 
     # regexes for different types of data
-    stat_re = re.compile(r'<div class="col-4 space-2">\s*<p>(\w+)</p>\s*<div class="progress-bar"><div class="progress" style="witimestamph:(.*)%"></div>\s*</div>\s*</div>')
+    stat_re = re.compile(r'<div class="col-4 space-2">\s*<p>(\w+)</p>\s*<div class="progress-bar"><div class="progress" style="width:(.*)%"></div>\s*</div>\s*</div>')
     info_re = re.compile(r'<div class="col-3">\s*<h4 class="text-bold text-light">(.*)</h4>\s*<p>(.*)</p>\s*</div>')
     value_re = re.compile(r'<i class="fa fa-medkit"></i>(.*)')
     check_re = re.compile(r'<i class="fa fa-check"></i>')
@@ -267,13 +265,12 @@ def scrape_lands(browser):
 
 async def update_lands_db():
     channel = client.get_channel(ini.DEV_CHANNEL_ID)
-    await client.wait_until_ready()
     land = get_land_counts()
     sql = "INSERT INTO `land` (`unowned`, `owned_farm`, `owned_building`, `total_owned`, `total`, `timestamp`) VALUES (%s, %s, %s, %s, %s, %s);"
     db = conn.cursor()
     db.execute(sql, (land['unowned'], land['owned_grain'], land['owned_building'], land['total_owned'], land['total'], datetime.datetime.utcnow()))
     conn.commit()
-    print(timestamp + ': Updated land ownership tables in omnidb.')
+    print(str(timestamp) + ': Updated land ownership tables in omnidb.')
     db.close()
     await client.send_message(channel, 'Updated land ownership tables in omnidb.')
     asyncio.sleep(3600)
