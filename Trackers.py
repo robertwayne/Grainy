@@ -6,7 +6,8 @@ import Configuration as ini
 import datetime
 import re
 import sys
-from Client import client
+from Client import client, timestamp
+from Database import conn
 
 
 # Build a session and submit log-in data upon initialization
@@ -31,7 +32,6 @@ except SyntaxError:
 async def get_grain_price():
     previous_price = 0
 
-    await client.wait_until_ready()
     while not client.is_closed:
         await asyncio.sleep(ini.UPDATE_RATE)
         br.open('{url}'.format(url=ini.LAND_URL))
@@ -41,25 +41,24 @@ async def get_grain_price():
         # replace 'result' commas with whitespace and convert to a float
         r = result.replace(',', '')
         price = (float(r))
-        dt = datetime.datetime.utcnow()
 
         if price > ini.EVERYONE_ALERT_THRESHOLD and previous_price != r:
-            print('@everyone Grain Price: ' + r)
+            print(str(timestamp) + ': ' + '@everyone Grain Price: ' + r)
             em = discord.Embed(title="Grain Alert",
                                url="https://www.zapoco.com/land/grain",
                                description="**Price: " + r + "**",
                                color=0x783e8e,
-                               timestamp=dt)
+                               timestamp=timestamp)
             await client.send_message(client.get_channel(ini.OMNIBOT_CHANNEL_ID),  '@everyone', embed=em)
             previous_price = r
             await asyncio.sleep(ini.UPDATE_RATE)
         elif price > ini.ALERT_THRESHOLD and previous_price != r:
-            print('Grain Price: ' + r)
+            print(str(timestamp) + ': ' + 'Grain Price: ' + r)
             em = discord.Embed(title="Grain Alert",
                                url="https://www.zapoco.com/land/grain",
                                description="**Price: " + r + "**",
                                color=0x783e8e,
-                               timestamp=dt)
+                               timestamp=timestamp)
             await client.send_message(client.get_channel(ini.OMNIBOT_CHANNEL_ID), embed=em)
             previous_price = r
             await asyncio.sleep(ini.UPDATE_RATE)
@@ -69,7 +68,6 @@ async def get_npc_health():
     channel = client.get_channel(ini.RAID_CHANNEL_ID)
     previous_welder_hp = '90/90'
 
-    await client.wait_until_ready()
     while not client.is_closed:
         br.open('https://www.zapoco.com/user/1044')
         welder_hp = br.find(string=re.compile('90'))
@@ -80,16 +78,6 @@ async def get_npc_health():
             previous_welder_hp = welder_hp
             await asyncio.sleep(300)
         await asyncio.sleep(10)
-
-
-def get_item_name(item_number):
-    br.open('https://www.zapoco.com/item/{}'.format(item_number))
-    item_name = ''
-
-    name_re = re.compile(r'<h2><span class="text-light text-strong">(.*)</span></h2>')
-    name_div = "{}".format(br.select('h2')[0])  # Name
-    item_name = name_re.match(name_div)[1]
-    return item_name
 
 
 def get_item_stats(item_number):
@@ -110,10 +98,9 @@ def get_item_stats(item_number):
     info_divs = br.select('div.col-3')
 
     if len(name_div) > 0:
-        "{}".format(name_div[0])
-        match = name_re.match(name_div)
+        match = name_re.match("{}".format(name_div[0]))
         if match is not None:
-            item_data['name'] = match[1]
+            item_data['Name'] = match[1]
 
     # print(info_divs)
     for div in info_divs:
@@ -163,7 +150,7 @@ def get_item_stats(item_number):
     return item_data
 
 
-async def get_vehicle_stats(vehicle_number):
+def get_vehicle_stats(vehicle_number):
     br.open('https://www.zapoco.com/vehicle/{}'.format(vehicle_number))
 
     veh_data = {}
@@ -176,7 +163,12 @@ async def get_vehicle_stats(vehicle_number):
     name_div = "{}".format(br.select('h2')[0])  # Name
     stat_divs = br.select('div.col-4')
 
-    veh_data['name'] = name_re.match(name_div)[1]
+    veh_data['Name'] = name_re.match(name_div)[1]
+    # if len(name_div) > 0:
+    #     match = name_re.match("{}")
+    #     if match is not None:
+    #         veh_data['Name'] = match[1]
+
 
     # print(stat_divs)
     for div in stat_divs:
@@ -198,7 +190,7 @@ async def get_vehicle_stats(vehicle_number):
 
 
 # inventory parser: returns a dict with all items in inventory of the currently logged in player
-async def parse_inventory():
+def parse_inventory():
     br.open('https://www.zapoco.com/inventory')
     item_re = re.compile(r'<div class="pull-left pd-h-sm">\s*<a class="text-light text-strong" '
                          r'href="https://www.zapoco.com/item/(\d+)">(.*)</a> x(\d+)\s*</div>')
@@ -248,7 +240,7 @@ def get_land_counts():
     return {'unowned': unowned, "owned_grain": owned_grain, "owned_building": owned_building, "total_owned": owned_grain+owned_building, "total": unowned+owned_grain+owned_building}
 
 
-async def get_land_stats(browser, acre_number):
+def get_land_stats(browser, acre_number):
     browser.open('https://www.zapoco.com/land/acre/{}'.format(acre_number))
     user_re = re.compile(r'<span class="text-light">Owned by '
                          r'<a href="https://www.zapoco.com/user/\d+">'
@@ -301,5 +293,19 @@ def scrape_lands(browser):
         file.close()
 
 
+async def update_lands_db():
+    channel = client.get_channel(ini.DEV_CHANNEL_ID)
+    land = get_land_counts()
+    sql = "INSERT INTO `land` (`unowned`, `owned_farm`, `owned_building`, `total_owned`, `total`, `timestamp`) VALUES (%s, %s, %s, %s, %s, %s);"
+    db = conn.cursor()
+    db.execute(sql, (land['unowned'], land['owned_grain'], land['owned_building'], land['total_owned'], land['total'], datetime.datetime.utcnow()))
+    conn.commit()
+    print(str(timestamp) + ': Updated land ownership tables in omnidb.')
+    db.close()
+    await client.send_message(channel, 'Updated land ownership tables in omnidb.')
+    asyncio.sleep(3600)
+
+
 async def run_trackers():
-    await get_grain_price()
+    await get_grain_price() and await get_npc_health() and await update_lands_db()
+

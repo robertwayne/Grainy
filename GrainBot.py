@@ -7,6 +7,8 @@ import CrashReport
 import Trackers
 import Configuration as ini
 import Commands
+from concurrent.futures import ThreadPoolExecutor
+
 
 @client.event
 async def on_member_join(member):
@@ -20,7 +22,6 @@ async def on_member_join(member):
 
 
 @client.event
-@asyncio.coroutine
 async def on_ready():
     print('Logged in as ' + client.user.name + ' (' + client.user.id + ')')
     print('-----------------------------------------')
@@ -28,7 +29,15 @@ async def on_ready():
     # this needs to be rewritten asynchronously... source of crash
     await client.change_presence(game=discord.Game(name='Use !help for commands'))
     await CrashReport.send_crash_report()
-    client.loop.create_task(Trackers.get_grain_price())
+    try:
+        await client.loop.run_until_complete(asyncio.wait(await Trackers.get_grain_price()))
+    except Exception as e:
+        CrashReport.save_crash_report(e)
+        client.reload_bot()
+    # loop = asyncio.get_event_loop()
+    # tracker = loop.create_task(Trackers.run_trackers())
+    # tracker.add_done_callback(results)
+    # loop.run_until_complete(tracker)
 
 
 def main():

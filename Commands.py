@@ -5,8 +5,9 @@ import json
 import discord
 import Configuration as ini
 from discord.ext import commands
-from Trackers import parse_inventory, get_item_stats, get_item_name, get_land_counts
-from Client import client
+from Trackers import parse_inventory, get_item_stats, get_land_counts, update_lands_db, get_vehicle_stats
+from Client import client, timestamp
+from Database import conn
 
 
 async def reload_bot():
@@ -24,10 +25,6 @@ async def write_inventory():
     k = j.replace('{', '')
     p = k.replace(',', '')
     return p
-
-
-async def write_item(x):
-    return get_item_stats(x)
 
 
 @client.event
@@ -62,6 +59,7 @@ async def help():
                        color=0x783e8e)
     em.add_field(name='!stash', value='Displays items in the safehouse stash.',inline=False)
     em.add_field(name='!item <item_#>', value='Displays the stats of an in-game item.', inline=False)
+    em.add_field(name='!vehicle <vehicle_#>', value='Displays the stats of an in-game vehicle.', inline=False)
     em.add_field(name='!land', value='Displays general land ownership statistics.', inline=False)
     em.add_field(name='!item request <item_#> <quantity>', value='Requests an item from the safehouse. (NOT IMPLEMENTED)', inline=False)
     em.add_field(name='!item accept <user_id>', value='Allows an elevated user to accept a queued request. (NOT IMPLEMENTED)', inline=False)
@@ -70,19 +68,19 @@ async def help():
     await client.say(embed=em)
 
 
-# only works on weapons right now
+# prints an items statistics to chat
 @client.command(pass_context=True)
 async def item(ctx, item_num):
     item = get_item_stats(item_num)
-
     if item:
-        name = get_item_name(item_num)
-        em = discord.Embed(title=name + ' | ' + item['Type'],
+        em = discord.Embed(title=item['Name'] + ' | ' + item['Type'],
                            url='https://www.zapoco.com/item/{}'.format(item_num),
                            color=0x783e8e)
         em.set_footer(text='Value: ' + str(item['Value']) + ' | Circulation: ' + str(item['Circulation']))
         for stat in item:
-            if stat == 'Value':
+            if stat == 'Name':
+                pass
+            elif stat == 'Value':
                 pass
             elif stat == 'Type':
                 pass
@@ -97,6 +95,24 @@ async def item(ctx, item_num):
         await client.say('Item not found.')
 
 
+# prints a vehicles statistics to chat
+@client.command(pass_context=True)
+async def vehicle(ctx, vehicle_num):
+    vehicle = get_vehicle_stats(vehicle_num)
+    if vehicle:
+        em = discord.Embed(title=vehicle['Name'] + ' | Vehicle',
+                         url='https://www.zapoco.com/vehicle/{}'.format(vehicle_num),
+                         color=0x783e8e)
+        for stat in vehicle:
+            if stat == 'Name':
+                pass
+            elif stat:
+                em.add_field(name='{}'.format(stat), value=vehicle[stat], inline=False)
+        await client.say(embed=em)
+    else:
+        await client.say('Vehicle not found.')
+
+
 @client.command(pass_context=True)
 async def land(ctx):
     land = get_land_counts()
@@ -105,7 +121,39 @@ async def land(ctx):
     em.add_field(name='Unowned: ', value=str(land['unowned']))
     em.add_field(name='Owned (Farms): ', value=str(land['owned_grain']))
     em.add_field(name='Owned (Buildings): ', value=str(land['owned_building']))
-    em.set_footer(text='Total Owned: ' + str(land['total_owned']) + ' | Total:' + str(land['total']) +
-                  ' | Remaining Land: ' + str((land['total']) - land['total_owned']))
+    em.set_footer(text='Total Owned: ' + str(land['total_owned']) + ' | Total:' + str(land['total']))
 
     await client.say(embed=em)
+
+
+@client.command(pass_context=True)
+async def landDB(ctx):
+    sql = "SELECT "
+
+
+# @client.command(pass_context=True)
+# @commands.has_role('The Brains')
+# async def db_parse_items(ctx, i_num):
+#     name = get_item_name(i_num)
+#     stats = get_item_stats(i_num)
+#     j = json.dumps(stats)
+#
+#     #sql = "INSERT INTO `items` VALUES %s"
+#     #db.execute("INSERT INTO `items` VALUES %s;", j)
+#
+#     sql = "INSERT INTO `items` VALUES %s;"
+#     db.execute(sql, (name, j))
+#
+#
+#
+#
+#     conn.commit()
+#     db.close()
+#     await client.say('Inserted data into omnidb.')
+
+
+# Force a land update in the database by calling the update_land_db() function
+@client.command(pass_context=True)
+@commands.has_role('The Brains')
+async def db_write_land(ctx):
+    await update_lands_db()
