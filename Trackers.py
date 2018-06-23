@@ -178,9 +178,9 @@ def get_vehicle_stats(vehicle_number):
             stat = match[1]
             value = int(match[2])
             if (stat == "Speed"):
-                value = value / 10
+                value = value
             elif (stat == "Comfort"):
-                value = value / 10
+                value = value
             veh_data[stat] = value
             # print('{}: {}'.format(stat, value))
 
@@ -306,6 +306,9 @@ async def update_lands_db():
     asyncio.sleep(3600)
 
 
-async def run_trackers():
-    await get_grain_price() and await get_npc_health() and await update_lands_db()
+async def parse_item_list():
+    n = 166
+    stats = get_item_stats(n)
+    for n in range(0, n):
+        sql = "INSERT INTO `items` "
 
