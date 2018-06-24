@@ -1,9 +1,20 @@
 from discord.ext import commands
-from chatbot.omnibot import bot
+from chatbot.client import bot
 import discord
 import asyncio
 import sys
 import os
+import random
+
+
+@bot.event
+async def on_message(message):
+    # prevent the bot from replying to itself
+    if message.author == bot.user:
+        return
+
+    # recognizes decorated functions as commands
+    await bot.process_commands(message)
 
 
 # restarts the entire bot script
@@ -34,3 +45,11 @@ async def help():
     em.add_field(name='!restart', value='Allows an elevated user to restart me.', inline=False)
 
     await bot.say(embed=em)
+
+
+@bot.command(pass_context=True)
+async def tom():
+    msg = ['For real though, F Tom...', 'F Tom...', 'F Tom!', 'F Tom though...', 'Yeah, F Tom!']
+    r_msg = random.choice(msg)
+    print(r_msg)
+    await bot.say(r_msg)

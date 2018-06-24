@@ -1,24 +1,13 @@
+#!/usr/bin/python
 from discord.ext import commands
-from chatbot.configuration import config as ini
-import asyncio
 import datetime
-
-
-bot = commands.Bot(command_prefix='!')
-# allows us to override the internal help command
-bot.remove_command('help')
+import chatbot.commands
+import discord
+import asyncio
+from chatbot.client import bot
+import chatbot.configuration as ini
 
 dt = datetime.datetime.utcnow()
-
-
-@bot.event
-async def on_message(message):
-    # prevent the bot from replying to itself
-    if message.author == bot.user:
-        return
-
-    # recognizes decorated functions as commands
-    await bot.process_commands(message)
 
 
 @bot.event
