@@ -2,16 +2,13 @@
 from gevent import monkey; monkey.patch_socket()
 import discord
 import asyncio
-from Client import client
-import CrashReport
-import Trackers
-import Configuration as ini
-import Commands
+from deprecated.Client import client
+from discord import CrashReport, Trackers, Configuration as ini
 
 
 @client.event
 async def on_member_join(member):
-    # rewrite this to use config file and role ID's
+    # rewrite this to use configuration file and role ID's
     role_new = discord.utils.get(member.server.roles, name="Fresh Faces / Outsiders")
     role_hide = discord.utils.get(member.server.roles, name="Frank’s Little Beauties")
     try:

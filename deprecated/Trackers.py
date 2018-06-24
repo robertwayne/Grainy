@@ -2,12 +2,12 @@ import grequests
 import asyncio
 import discord
 from robobrowser import RoboBrowser
-import Configuration as ini
+from discord import Configuration as ini
 import datetime
 import re
 import sys
-from Client import client
-from Database import conn
+from deprecated.Client import client
+from deprecated.Database import conn
 
 dt = datetime.datetime.utcnow()
 

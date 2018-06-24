@@ -1,10 +1,10 @@
 body {
     background-color: #1d1d1d;
     margin: 0;
-    padding: 0;
     font-family: Arial, sans-serif;
     font-size: 13px;
     color: #ffffff;
+    padding-top: 250px;
 }
 
 
@@ -19,3 +19,17 @@ body {
     border-width: 3px;
     border-color: lightseagreen;
 }
+
+a {
+    color: white;
+    text-decoration: none;
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+.dropdown-menu {
+    display: block;
+    padding-top: 10px;
+    text-align: center;
+}
+

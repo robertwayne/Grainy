@@ -1,5 +1,5 @@
 import pymysql
-import Configuration as ini
+from discord import Configuration as ini
 
 conn = pymysql.connect(host='{}'.format(ini.DB_HOST),
                        user='{}'.format(ini.DB_USER),

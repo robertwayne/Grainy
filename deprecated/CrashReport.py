@@ -1,5 +1,5 @@
-from Client import client
-import Configuration as ini
+from deprecated.Client import client
+from discord import Configuration as ini
 import traceback
 import os
 
