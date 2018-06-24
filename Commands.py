@@ -6,7 +6,8 @@ import discord
 import Configuration as ini
 from discord.ext import commands
 from Trackers import parse_inventory, get_item_stats, get_land_counts, update_lands_db, get_vehicle_stats
-from Client import client, timestamp
+from Client import client
+import datetime
 from Database import conn
 
 
@@ -17,7 +18,7 @@ async def reload_bot():
 
 
 async def write_inventory():
-    inventory = await parse_inventory()
+    inventory = parse_inventory()
     r = json.dumps(inventory, sort_keys=True, indent=0)
     # lol, I'm sure this can be done with a loop
     i = r.replace('"', '')

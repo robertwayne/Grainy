@@ -6,9 +6,10 @@ import Configuration as ini
 import datetime
 import re
 import sys
-from Client import client, timestamp
+from Client import client
 from Database import conn
 
+dt = datetime.datetime.utcnow()
 
 # Build a session and submit log-in data upon initialization
 headers = {
@@ -43,22 +44,22 @@ async def get_grain_price():
         price = (float(r))
 
         if price > ini.EVERYONE_ALERT_THRESHOLD and previous_price != r:
-            print(str(timestamp) + ': ' + '@everyone Grain Price: ' + r)
+            print(str(dt) + ': ' + '@everyone Grain Price: ' + r)
             em = discord.Embed(title="Grain Alert",
                                url="https://www.zapoco.com/land/grain",
                                description="**Price: " + r + "**",
                                color=0x783e8e,
-                               timestamp=timestamp)
+                               timestamp=dt)
             await client.send_message(client.get_channel(ini.OMNIBOT_CHANNEL_ID),  '@everyone', embed=em)
             previous_price = r
             await asyncio.sleep(ini.UPDATE_RATE)
         elif price > ini.ALERT_THRESHOLD and previous_price != r:
-            print(str(timestamp) + ': ' + 'Grain Price: ' + r)
+            print(str(dt) + ': ' + 'Grain Price: ' + r)
             em = discord.Embed(title="Grain Alert",
                                url="https://www.zapoco.com/land/grain",
                                description="**Price: " + r + "**",
                                color=0x783e8e,
-                               timestamp=timestamp)
+                               timestamp=dt)
             await client.send_message(client.get_channel(ini.OMNIBOT_CHANNEL_ID), embed=em)
             previous_price = r
             await asyncio.sleep(ini.UPDATE_RATE)
@@ -300,7 +301,7 @@ async def update_lands_db():
     db = conn.cursor()
     db.execute(sql, (land['unowned'], land['owned_grain'], land['owned_building'], land['total_owned'], land['total'], datetime.datetime.utcnow()))
     conn.commit()
-    print(str(timestamp) + ': Updated land ownership tables in omnidb.')
+    print(str(dt) + ': Updated land ownership tables in omnidb.')
     db.close()
     await client.send_message(channel, 'Updated land ownership tables in omnidb.')
     asyncio.sleep(3600)

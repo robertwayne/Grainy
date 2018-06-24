@@ -7,7 +7,6 @@ import CrashReport
 import Trackers
 import Configuration as ini
 import Commands
-from concurrent.futures import ThreadPoolExecutor
 
 
 @client.event
