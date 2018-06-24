@@ -1,5 +1,5 @@
 from discord.ext import commands
-from discord.configuration import config as ini
+from chatbot.configuration import config as ini
 import asyncio
 import datetime
 

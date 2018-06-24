@@ -1,6 +1,5 @@
-from discord.configuration import config as ini
 from discord.ext import commands
-from discord.omnibot import bot
+from chatbot.omnibot import bot
 import discord
 import asyncio
 import sys
