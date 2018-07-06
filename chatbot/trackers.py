@@ -19,7 +19,7 @@ async def grain_alerts():
         if p == ini.EVERYONE_ALERT_THRESHOLD and previous_price != price:
             print(str(datetime.datetime.utcnow()) + ': ' + 'Grain Price: ' + str(p))
             em = discord.Embed(title="Grain Alert",
-                               url="{}".format(ini.LAND_URL),
+                               url="https://www.zapoco.com/land/grain",
                                description="**Price: " + str(p) + "**",
                                color=0x783e8e,
                                timestamp=datetime.datetime.utcnow())
@@ -28,7 +28,7 @@ async def grain_alerts():
         elif int(price['current_price']) > ini.ALERT_THRESHOLD and previous_price != price:
             print(str(datetime.datetime.utcnow()) + ': ' + 'Grain Price: ' + str(p))
             em = discord.Embed(title="Grain Alert",
-                               url="{}".format(ini.LAND_URL),
+                               url="https://www.zapoco.com/land/grain",
                                description="**Price: " + str(p) + "**",
                                color=0x783e8e,
                                timestamp=datetime.datetime.utcnow())
