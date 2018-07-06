@@ -46,18 +46,25 @@ async def help():
     em = discord.Embed(title='OmniBot Help',
                        color=0x783e8e,
                        url='https://omnidb.io/#')
-    #em.add_field(name='!stash', value='Displays items in the safehouse stash.', inline=False)
-    em.add_field(name='!item "item name"', value='Displays the stats of an in-game item. Use quotes "" for multiple words.', inline=False)
-    em.add_field(name='!inum <item ID>', value='Displays the stats of an in-game item.', inline=False)
-    em.add_field(name='!vehicle <vehicle ID>', value='Displays the stats of an in-game vehicle.', inline=False)
-    em.add_field(name='!land', value='Displays general land ownership statistics.', inline=False)
-    em.add_field(name='!restart', value='Allows an elevated user to restart me.', inline=False)
+    # em.add_field(name='!stash', value='Displays items in the safehouse stash.', inline=False)
+    em.add_field(name='!item "item name"',
+                 value='Displays the stats of an in-game item. Use quotes "" for multiple words.', inline=False)
+    em.add_field(name='!inum <item ID>',
+                 value='Displays the stats of an in-game item.', inline=False)
+    em.add_field(name='!vehicle <vehicle ID>',
+                 value='Displays the stats of an in-game vehicle.', inline=False)
+    em.add_field(name='!land',
+                 value='Displays general land ownership statistics.', inline=False)
+    em.add_field(name='!restart',
+                 value='Allows an elevated user to restart me.', inline=False)
 
     await bot.say(embed=em)
 
 
+# noinspection PyShadowingNames
 @bot.command(pass_context=True)
 async def land():
+    # noinspection PyShadowingNames
     land = await db_get_land_stats()
     em = discord.Embed(title='Land Stats',
                        color=0x783e8e)
@@ -71,6 +78,7 @@ async def land():
 
 @bot.command(pass_context=True)
 async def inum(ctx, x):
+    # noinspection PyShadowingNames
     item = await db_get_item_stats(x)
     print(item)
     if item:
@@ -102,6 +110,7 @@ async def inum(ctx, x):
 
 @bot.command(pass_context=True)
 async def item(ctx, x):
+    # noinspection PyShadowingNames
     item = await db_get_item_stats_from_name(x)
     print(item)
     if item:
@@ -133,11 +142,12 @@ async def item(ctx, x):
 
 @bot.command(pass_context=True)
 async def vehicle(ctx, x):
+    # noinspection PyShadowingNames
     vehicle = await db_get_vehicle_stats(x)
     if vehicle:
         em = discord.Embed(title=vehicle['Name'] + ' | Vehicle',
-                         url='https://www.zapoco.com/vehicle/{}'.format(x),
-                         color=0x783e8e)
+                           url='https://www.zapoco.com/vehicle/{}'.format(x),
+                           color=0x783e8e)
         for stat in vehicle:
             if stat == 'Name':
                 pass

@@ -1,6 +1,5 @@
 import configparser
 
-
 config = configparser.ConfigParser()
 config.read('../config/config.ini')
 
@@ -29,7 +28,6 @@ DB_DATA = config.get('DATABASE-INFO', 'DB_DATA')
 
 
 # Functions to change values via commands
-
 async def update_grain_threshold(x, y):
     config.set('GAME-INFO', 'ALERT_THRESHOLD', '{}'.format(x))
     config.set('GAME-INFO', 'EVERYONE_ALERT_THRESHOLD', '{}'.format(y))

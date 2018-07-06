@@ -63,7 +63,7 @@ def get_item_stats(item_number):
     check_re = re.compile(r'<i class="fa fa-check"></i>')
 
     # grab the correct html snippets, as strings
-    name_div = br.select('h2') # Name is the first one
+    name_div = br.select('h2')  # Name is the first one
     stat_divs = br.select('div.col-4.space-2')
     info_divs = br.select('div.col-3')
 
@@ -147,9 +147,9 @@ def get_vehicle_stats(vehicle_number):
         if match is not None:
             stat = match[1]
             value = int(match[2])
-            if (stat == "Speed"):
+            if stat == "Speed":
                 value = value
-            elif (stat == "Comfort"):
+            elif stat == "Comfort":
                 value = value
             veh_data[stat] = value
             # print('{}: {}'.format(stat, value))

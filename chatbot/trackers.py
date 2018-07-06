@@ -4,7 +4,6 @@ import discord
 import datetime
 from chatbot.client import bot
 import config.configuration as ini
-import re
 
 db = conn.cursor()
 
@@ -57,7 +56,7 @@ async def db_get_item_stats(x):
 
 async def db_get_item_stats_from_name(x):
     sql = "SELECT * FROM `items` WHERE MATCH (Name) AGAINST (%s)"
-    db.execute(sql, (x))
+    db.execute(sql, x)
     stats = db.fetchone()
     conn.commit()
 
