@@ -11,15 +11,20 @@ BOT_PASSWORD = replaceme
 
 [GAME-INFO]
 LOGIN_URL = replaceme
-LAND_URL = replaceme
 UPDATE_RATE = replaceme
 ALERT_THRESHOLD = replaceme
-LOCALE_DATA = en_US.UTF-8
 EVERYONE_ALERT_THRESHOLD = replaceme
-PRICE_CSS_SELECTOR = replaceme
 
 [DISCORD-INFO]
 OMNIBOT_CHANNEL_ID = replaceme
-RAID_CHANNEL_ID = replaceme
 DEV_CHANNEL_ID = replaceme
-ELEVATED_ROLE_ID = replaceme
+ADMIN_ROLE_NAME = replaceme
+ELEVATED_ROLE_NAME = replaceme
+NEWBIE_ROLE_NAME = replaceme
+
+[DATABASE-INFO]
+DB_HOST = replaceme
+DB_PORT = replaceme
+DB_USER = replaceme
+DB_PASS = replaceme
+DB_DATA = replaceme
