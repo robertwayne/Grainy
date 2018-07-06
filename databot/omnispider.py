@@ -137,7 +137,6 @@ def get_vehicle_stats(vehicle_number):
     #     if match is not None:
     #         veh_data['Name'] = match[1]
 
-
     # print(stat_divs)
     for div in stat_divs:
         # print(div)
