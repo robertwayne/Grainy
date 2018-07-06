@@ -177,6 +177,13 @@ async def tier():
 
 
 @bot.command(pass_context=True)
+async def hug():
+    msg = '*hugs everyone* Everyone here is awesome!'
+    print(msg)
+    await bot.say(msg)
+
+
+@bot.command(pass_context=True)
 async def tom():
     msg = ['For real though, F Tom...', 'F Tom...', 'F Tom!', 'Fuck Hillto- er, I mean F Tom!', 'Yeah, F Tom!']
     r_msg = random.choice(msg)
