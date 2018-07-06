@@ -205,6 +205,7 @@ def get_land_counts():
 
     return {'unowned': unowned, "owned_grain": owned_grain, "owned_building": owned_building, "total_owned": owned_grain+owned_building, "total": unowned+owned_grain+owned_building}
 
+
 #####################################
 #      DATABASE WRITE FUNCTIONS     #
 #####################################
