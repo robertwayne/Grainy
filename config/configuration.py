@@ -23,7 +23,7 @@ DB_HOST = config.get('DATABASE-INFO', 'DB_HOST')
 DB_PORT = config.get('DATABASE-INFO', 'DB_PORT')
 DB_USER = config.get('DATABASE-INFO', 'DB_USER')
 DB_PASS = config.get('DATABASE-INFO', 'DB_PASS')
-DB_DATA = config.get('DATABASE-INFO', 'DB_DATA')
+DB_NAME = config.get('DATABASE-INFO', 'DB_NAME')
 
 
 # Functions to change values via commands

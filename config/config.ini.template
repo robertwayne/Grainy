@@ -27,4 +27,4 @@ DB_HOST = replaceme
 DB_PORT = replaceme
 DB_USER = replaceme
 DB_PASS = replaceme
-DB_DATA = replaceme
+DB_NAME = replaceme
