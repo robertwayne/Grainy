@@ -11,7 +11,7 @@ import chatbot.commands
 @bot.event
 async def on_member_join(member):
     # rewrite this to use config file and role ID's
-    role_new = discord.utils.get(member.server.roles, name="Fresh Faces / Outsiders")
+    role_new = discord.utils.get(member.server.roles, name='{}'.format(ini.NEWBIE_ROLE_NAME))
     await bot.add_roles(member, role_new)
 
 

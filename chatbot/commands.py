@@ -34,7 +34,7 @@ async def reload_bot():
 
 
 @bot.command()
-@commands.has_role('Nightcrawlers')
+@commands.has_role('{}'.format(ini.ELEVATED_ROLE_NAME))
 async def restart():
     await bot.say('Restarting now!')
     print('Restarting...')
@@ -189,7 +189,7 @@ async def tom():
 #####################################
 
 @bot.command(pass_context=True)
-@commands.has_role('The Brains')
+@commands.has_role('{}'.format(ini.ADMIN_ROLE_NAME))
 async def db_force_update_table(ctx, x):
     if x == 'items':
         await db_update_item_table()
@@ -205,7 +205,7 @@ async def db_force_update_table(ctx, x):
 
 
 @bot.command(pass_context=True)
-@commands.has_role('The Brains')
+@commands.has_role('{}'.format(ini.ADMIN_ROLE_NAME))
 async def db_force_write_new_table(ctx, x):
     if x == 'items':
         await db_write_item_table()
@@ -221,7 +221,7 @@ async def db_force_write_new_table(ctx, x):
 
 
 @bot.command(pass_context=True)
-@commands.has_role('The Brains')
+@commands.has_role('{}'.format(ini.ADMIN_ROLE_NAME))
 async def db_search_index():
     sql = "ALTER TABLE `items` ADD FULLTEXT(Name)"
     db.execute(sql)
