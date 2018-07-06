@@ -4,7 +4,7 @@ import discord
 import sys
 import os
 import random
-from chatbot.trackers import db_get_land_stats, db_get_item_stats, db_get_vehicle_stats, db_get_item_stats_from_name
+from chatbot.trackers import *
 from databot.omnispider import *
 # from config.configuration import update_grain_threshold
 
@@ -142,7 +142,7 @@ async def item(ctx, x):
                              inline=False)
         await bot.say(embed=em)
     else:
-        await bot.say('Item name not found.')
+        await bot.say('Item name not found. *Did you spell it correctly? Use !inum for item ID\'s.*')
 
 
 @bot.command(pass_context=True)
