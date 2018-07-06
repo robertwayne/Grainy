@@ -1,13 +1,12 @@
 from discord.ext import commands
 from chatbot.client import bot
 import discord
-import asyncio
 import sys
 import os
 import random
 from chatbot.trackers import db_get_land_stats, db_get_item_stats, db_get_vehicle_stats, db_get_item_stats_from_name
 from databot.omnispider import *
-from config.configuration import update_grain_threshold
+# from config.configuration import update_grain_threshold
 
 
 @bot.event
@@ -18,12 +17,6 @@ async def on_message(message):
 
     # recognizes decorated functions as commands
     await bot.process_commands(message)
-
-
-@bot.event
-async def on_command_error(error, ctx):
-    if type(error) is commands.TooManyArguments:
-        await bot.say('Too many arguments.'.format(ctx))
 
 
 # restarts the entire bot script
@@ -48,15 +41,20 @@ async def help():
                        url='https://omnidb.io/#')
     # em.add_field(name='!stash', value='Displays items in the safehouse stash.', inline=False)
     em.add_field(name='!item "item name"',
-                 value='Displays the stats of an in-game item. Use quotes "" for multiple words.', inline=False)
+                 value='Displays the stats of an in-game item. Use quotes "" for multiple words.',
+                 inline=False)
     em.add_field(name='!inum <item ID>',
-                 value='Displays the stats of an in-game item.', inline=False)
+                 value='Displays the stats of an in-game item.',
+                 inline=False)
     em.add_field(name='!vehicle <vehicle ID>',
-                 value='Displays the stats of an in-game vehicle.', inline=False)
+                 value='Displays the stats of an in-game vehicle.',
+                 inline=False)
     em.add_field(name='!land',
-                 value='Displays general land ownership statistics.', inline=False)
+                 value='Displays general land ownership statistics.',
+                 inline=False)
     em.add_field(name='!restart',
-                 value='Allows an elevated user to restart me.', inline=False)
+                 value='Allows an elevated user to restart me.',
+                 inline=False)
 
     await bot.say(embed=em)
 
@@ -68,9 +66,12 @@ async def land():
     land = await db_get_land_stats()
     em = discord.Embed(title='Land Stats',
                        color=0x783e8e)
-    em.add_field(name='Unowned: ', value=str(land.get('unowned')))
-    em.add_field(name='Owned (Farms): ', value=str(land['owned_farm']))
-    em.add_field(name='Owned (Buildings): ', value=str(land['owned_building']))
+    em.add_field(name='Unowned: ',
+                 value=str(land.get('unowned')))
+    em.add_field(name='Owned (Farms): ',
+                 value=str(land['owned_farm']))
+    em.add_field(name='Owned (Buildings): ',
+                 value=str(land['owned_building']))
     em.set_footer(text='Total Owned: ' + str(land['total_owned']) + ' | Total:' + str(land['total']) + ' | Last updated: ' + str(land['timestamp']))
 
     await bot.say(embed=em)
@@ -102,7 +103,9 @@ async def inum(ctx, x):
             elif stat == 'id':
                 pass
             elif stat:
-                em.add_field(name='{}'.format(stat), value=item[stat], inline=False)
+                em.add_field(name='{}'.format(stat),
+                             value=item[stat],
+                             inline=False)
         await bot.say(embed=em)
     else:
         await bot.say('Item ID not found.')
@@ -134,7 +137,9 @@ async def item(ctx, x):
             elif stat == 'id':
                 pass
             elif stat:
-                em.add_field(name='{}'.format(stat), value=item[stat], inline=False)
+                em.add_field(name='{}'.format(stat),
+                             value=item[stat],
+                             inline=False)
         await bot.say(embed=em)
     else:
         await bot.say('Item name not found.')
@@ -156,7 +161,9 @@ async def vehicle(ctx, x):
             elif stat == 'id':
                 pass
             elif stat:
-                em.add_field(name='{}'.format(stat), value=vehicle[stat], inline=False)
+                em.add_field(name='{}'.format(stat),
+                             value=vehicle[stat],
+                             inline=False)
         await bot.say(embed=em)
     else:
         await bot.say('Vehicle not found.')
