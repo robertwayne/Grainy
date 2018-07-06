@@ -2,7 +2,7 @@ import configparser
 
 
 config = configparser.ConfigParser()
-config.read('./config/config.cfg')
+config.read('../config/config.ini')
 
 # Define variables from configuration.ini
 BOT_TOKEN = config.get('BOT-INFO', 'BOT_TOKEN')
@@ -15,7 +15,6 @@ UPDATE_RATE = config.getint('GAME-INFO', 'UPDATE_RATE')
 ALERT_THRESHOLD = config.getfloat('GAME-INFO', 'ALERT_THRESHOLD')
 LOCALE_DATA = config.get('GAME-INFO', 'LOCALE_DATA')
 EVERYONE_ALERT_THRESHOLD = config.getfloat('GAME-INFO', 'EVERYONE_ALERT_THRESHOLD')
-PRICE_CSS_SELECTOR = config.get('GAME-INFO', 'PRICE_CSS_SELECTOR')
 
 OMNIBOT_CHANNEL_ID = config.get('DISCORD-INFO', 'OMNIBOT_CHANNEL_ID')
 RAID_CHANNEL_ID = config.get('DISCORD-INFO', 'RAID_CHANNEL_ID')
@@ -27,3 +26,17 @@ DB_PORT = config.get('DATABASE-INFO', 'DB_PORT')
 DB_USER = config.get('DATABASE-INFO', 'DB_USER')
 DB_PASS = config.get('DATABASE-INFO', 'DB_PASS')
 DB_DATA = config.get('DATABASE-INFO', 'DB_DATA')
+
+
+# Functions to change values via commands
+
+async def update_grain_threshold(x, y):
+    config.set('GAME-INFO', 'ALERT_THRESHOLD', '{}'.format(x))
+    config.set('GAME-INFO', 'EVERYONE_ALERT_THRESHOLD', '{}'.format(y))
+
+    try:
+        with open('../config/config.ini', 'wb') as configfile:
+            config.write(configfile)
+    except Exception as e:
+        print(e)
+        pass

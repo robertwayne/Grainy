@@ -1,15 +1,13 @@
 import grequests
-import asyncio
-import discord
 from robobrowser import RoboBrowser
-from discord import Configuration as ini
-import datetime
 import re
-import sys
-from deprecated.Client import client
+import asyncio
+import config.configuration as ini
 from databot.database import conn
+import datetime
 
-dt = datetime.datetime.utcnow()
+# open up a cursor
+db = conn.cursor()
 
 # Build a session and submit log-in data upon initialization
 headers = {
@@ -33,52 +31,23 @@ except SyntaxError:
 async def get_grain_price():
     previous_price = 0
 
-    while not client.is_closed:
-        await asyncio.sleep(ini.UPDATE_RATE)
-        br.open('{url}'.format(url=ini.LAND_URL))
-        result = br.find('h2', {'class': '{pcs}'.format(pcs=ini.PRICE_CSS_SELECTOR)}).get_text()
-        # global_tonnage = br.find()
+    await asyncio.sleep(ini.UPDATE_RATE)
+    br.open('{}'.format(ini.LAND_URL))
+    result = br.find('h2', {'class': 'text-bold text-light space-1'}).get_text()
+    # replace 'result' commas with whitespace and convert to an int
+    r = result.replace(',', '')
+    price = (int(r))
+    print(price)
 
-        # replace 'result' commas with whitespace and convert to a float
-        r = result.replace(',', '')
-        price = (float(r))
-
-        if price > ini.EVERYONE_ALERT_THRESHOLD and previous_price != r:
-            print(str(dt) + ': ' + '@everyone Grain Price: ' + r)
-            em = discord.Embed(title="Grain Alert",
-                               url="https://www.zapoco.com/land/grain",
-                               description="**Price: " + r + "**",
-                               color=0x783e8e,
-                               timestamp=dt)
-            await client.send_message(client.get_channel(ini.OMNIBOT_CHANNEL_ID),  '@everyone', embed=em)
-            previous_price = r
-            await asyncio.sleep(ini.UPDATE_RATE)
-        elif price > ini.ALERT_THRESHOLD and previous_price != r:
-            print(str(dt) + ': ' + 'Grain Price: ' + r)
-            em = discord.Embed(title="Grain Alert",
-                               url="https://www.zapoco.com/land/grain",
-                               description="**Price: " + r + "**",
-                               color=0x783e8e,
-                               timestamp=dt)
-            await client.send_message(client.get_channel(ini.OMNIBOT_CHANNEL_ID), embed=em)
-            previous_price = r
-            await asyncio.sleep(ini.UPDATE_RATE)
+    return price
 
 
-async def get_npc_health():
-    channel = client.get_channel(ini.RAID_CHANNEL_ID)
-    previous_welder_hp = '90/90'
-
-    while not client.is_closed:
-        br.open('https://www.zapoco.com/user/1044')
-        welder_hp = br.find(string=re.compile('90'))
-
-        if welder_hp == '45/90' and welder_hp < previous_welder_hp:
-            print('Welder Health: ' + welder_hp)
-            await client.send_message(channel, 'Welder current health: ' + welder_hp)
-            previous_welder_hp = welder_hp
-            await asyncio.sleep(300)
-        await asyncio.sleep(10)
+async def db_update_grain():
+    while True:
+        cur_price = await get_grain_price()
+        sql = "UPDATE `grain` SET current_price=%s"
+        db.execute(sql, cur_price)
+        conn.commit()
 
 
 def get_item_stats(item_number):
@@ -126,7 +95,7 @@ def get_item_stats(item_number):
     # hard coded bot max stats; used for normalization
     bot_eng = 100
     bot_nerve = 10
-    bot_hap = 5750
+    bot_hap = 100
     bot_life = 100
 
     # print(stat_divs)
@@ -239,70 +208,122 @@ def get_land_counts():
 
     return {'unowned': unowned, "owned_grain": owned_grain, "owned_building": owned_building, "total_owned": owned_grain+owned_building, "total": unowned+owned_grain+owned_building}
 
-
-def get_land_stats(browser, acre_number):
-    browser.open('https://www.zapoco.com/land/acre/{}'.format(acre_number))
-    user_re = re.compile(r'<span class="text-light">Owned by '
-                         r'<a href="https://www.zapoco.com/user/\d+">'
-                         r'<span[^>]*>(\w+).*</span></a> \(owns (\d+) acres\)</span>')
-    selection = browser.select('span.text-light')
-
-    if selection is None or selection == []:
-        # print('acre not owned')
-        return None, 0
-
-    if acre_number in []:  # list should contain all the lands that the bot owns (land numbers)
-        # print('Self owned')
-        return None, 0  # hard coded stats: the bot's name and the number of land it owns
-
-    match = None
-
-    for div in browser.select('span.text-light'):
-        match = user_re.match('{}'.format(div))
-        if match is not None:
-            return '{}'.format(match[1]), '{}'.format(match[2])
-
-    print('Something went wrong parsing acre {}'.format(acre_number))
-    return None, 0
+#####################################
+#      DATABASE WRITE FUNCTIONS     #
+#####################################
 
 
-def map_land_owners(browser, file=None):
-    users = {}
-    first = 1
-    last = 7882
-
-    for acre in range(first, last+1):
-        user, acres = get_land_stats(browser, acre)
-        if user is not None and user not in users:
-            users[user] = acres
-            if file is None:
-                print('{} owns {} acres'.format(user, acres))
-            else:
-                file.write('{}, {}\n'.format(user, acres))
-                sys.stdout.write('\r{}/{} done      '.format(acre, last-first+1))
-                sys.stdout.flush()
-
-    print('done')
-
-
-def scrape_lands(browser):
+async def db_write_vehicle_table():
     try:
-        file = open("acres.txt", 'w')
-        map_land_owners(browser, file)
+        db.execute("SELECT COUNT(*) FROM vehicles")
+        id_last = db.fetchone()
+        for x in range(id_last['COUNT(*)'], 10000):
+            vehicle = get_vehicle_stats(x)
+            if vehicle['Name'] is None:
+                break
+            else:
+                sql = "INSERT INTO `vehicles` (`name`, `distance`, `speed`, `comfort`, `id`) VALUES (%s, %s, %s, %s, %s)"
+                db.execute(sql, (vehicle.get('Name'), vehicle.get('Distance'), vehicle.get('Speed'), vehicle.get('Comfort'), x))
+                conn.commit()
+    except Exception as e:
+        print(e)
+        pass
     finally:
-        file.close()
+        print('Success.')
 
 
-async def update_lands_db():
-    channel = client.get_channel(ini.DEV_CHANNEL_ID)
-    land = get_land_counts()
-    sql = "INSERT INTO `land` (`unowned`, `owned_farm`, `owned_building`, `total_owned`, `total`, `timestamp`) VALUES (%s, %s, %s, %s, %s, %s);"
-    db = conn.cursor()
-    db.execute(sql, (land['unowned'], land['owned_grain'], land['owned_building'], land['total_owned'], land['total'], datetime.datetime.utcnow()))
-    conn.commit()
-    print(str(dt) + ': Updated land ownership tables in omnidb.')
-    db.close()
-    await client.send_message(channel, 'Updated land ownership tables in omnidb.')
-    asyncio.sleep(3600)
+async def db_write_item_table():
+    try:
+        # count rows in items table, then add from there
+        db.execute("SELECT COUNT(*) FROM items")
+        id_last = db.fetchone()
+        # this is hacky as fuck: returns dict w/ COUNT(*) as key
+        for x in range(id_last['COUNT(*)'], 10000):
+            item = get_item_stats(x)
+            # every item has to have a name, so this ensures we break out when we reach the end of items in game
+            if item['Name'] is None:
+                break
+            else:
+                sql = "INSERT INTO `items` (`Name`, `Type`, `Value`, `Circulation`, `Damage`, `Accuracy`, `Stealth`, `Cooldown`, `Life`, `Happiness`, `Energy`, `Nerve`, `id`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                db.execute(sql, (item.get('Name', None), item.get('Type', None), item.get('Value', None),
+                                 item.get('Circulation', None), item.get('Damage', None), item.get('Accuracy', None), item.get('Stealth', None),
+                                 item.get('Cooldown', None), item.get('Life', None), item.get('Happy', None), item.get('Energy', None),
+                                 item.get('Nerve', None), x))
+                conn.commit()
+    except Exception as e:
+        print(e)
+        pass
+    finally:
+        print('Success.')
 
 
+async def db_update_land_table():
+    try:
+        land = get_land_counts()
+        sql = "INSERT INTO `land` (`unowned`, `owned_farm`, `owned_building`, `total_owned`, `total`, `timestamp`) VALUES (%s, %s, %s, %s, %s, %s);"
+        db.execute(sql, (land['unowned'], land['owned_grain'], land['owned_building'], land['total_owned'], land['total'], datetime.datetime.utcnow()))
+        conn.commit()
+    except Exception as e:
+        print(e)
+        pass
+    finally:
+        print('Success.')
+
+
+#####################################
+#      DATABASE UPDATE FUNCTIONS    #
+#####################################
+
+
+async def db_update_item_table():
+    try:
+        limit = db.execute("SELECT COUNT(*) FROM items")
+        conn.commit()
+        for x in range(1, limit):
+            sql = "UPDATE items SET Name=%s, Type=%s, Value=%s, Circulation=%s, Damage=%s, Accuracy=%s, Stealth=%s, Cooldown=%s, Life=%s, Happiness=%s, Energy=%s, Nerve=%s WHERE id=%s"
+            item = get_item_stats(x)
+            db.execute(sql, (item.get('Name', None), item.get('Type', None), item.get('Value', None),
+                             item.get('Circulation', None), item.get('Damage', None), item.get('Accuracy', None),
+                             item.get('Stealth', None),
+                             item.get('Cooldown', None), item.get('Life', None), item.get('Happy', None),
+                             item.get('Energy', None),
+                             item.get('Nerve', None), x))
+            conn.commit()
+    except Exception as e:
+        print(e)
+        pass
+    finally:
+        print('Success.')
+
+
+async def db_update_vehicle_table():
+    try:
+        for x in range(1, 10):
+            sql = "UPDATE vehicles SET name=%s, distance=%s, speed=%s, comfort=%s WHERE id=%s"
+            vehicle = get_vehicle_stats(x)
+            db.execute(sql, (vehicle.get('Name', None), vehicle.get('Distance', None), vehicle.get('Speed', None), vehicle.get('Comfort', None), x))
+            conn.commit()
+    except Exception as e:
+        print(e)
+        pass
+    finally:
+        print('Success.')
+
+
+def main():
+    event_loop = asyncio.get_event_loop()
+    try:
+        print('Running...')
+        asyncio.ensure_future(db_update_grain())
+        event_loop.run_forever()
+    except Exception as e:
+        print(e)
+    finally:
+        print('Closing database...')
+        db.close()
+        print('Closing event loop...')
+        event_loop.close()
+
+
+if __name__ == '__main__':
+    main()

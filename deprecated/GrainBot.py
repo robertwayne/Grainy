@@ -23,7 +23,7 @@ async def on_ready():
     print('-----------------------------------------')
     print('Running...')
     # this needs to be rewritten asynchronously... source of crash
-    await client.change_presence(game=discord.Game(name='Use !help for commands'))
+    await client.change_presence(discord.Game(name='Use !help for commands'))
     await CrashReport.send_crash_report()
     try:
         await client.loop.run_until_complete(asyncio.wait(await Trackers.get_grain_price()))

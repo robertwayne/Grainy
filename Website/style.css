@@ -11,13 +11,18 @@ body {
 .logo {
     text-align: center;
     padding-top: 5px;
+    margin-bottom: -20px;
 }
 
 .search {
     text-align: center;
+}
+
+.search-bar {
+    padding: 2px 2px 2px 15px;
+    border-color: #b2a701;
     border-radius: 2px;
     border-width: 3px;
-    border-color: lightseagreen;
 }
 
 a {
@@ -33,3 +38,11 @@ a {
     text-align: center;
 }
 
+.footer {
+    text-align: center;
+    color: dimgrey;
+    position: fixed;
+    left: 0;
+    bottom: 5px;
+    width: 100%;
+}

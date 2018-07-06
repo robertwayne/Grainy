@@ -116,7 +116,7 @@ async def land(ctx):
     land = get_land_counts()
     em = discord.Embed(title='Land Stats',
                        color=0x783e8e)
-    em.add_field(name='Unowned: ', value=str(land['unowned']))
+    em.add_field(name='Unowned: ', value=str(land.get['unowned']))
     em.add_field(name='Owned (Farms): ', value=str(land['owned_grain']))
     em.add_field(name='Owned (Buildings): ', value=str(land['owned_building']))
     em.set_footer(text='Total Owned: ' + str(land['total_owned']) + ' | Total:' + str(land['total']))
@@ -129,7 +129,7 @@ async def landDB(ctx):
     sql = "SELECT "
 
 
-# @server.command(pass_context=True)
+# @databot.command(pass_context=True)
 # @commands.has_role('The Brains')
 # async def db_parse_items(ctx, i_num):
 #     name = get_item_name(i_num)
@@ -147,7 +147,7 @@ async def landDB(ctx):
 #
 #     conn.commit()
 #     db.close()
-#     await server.say('Inserted data into omnidb.')
+#     await databot.say('Inserted data into omnidb.')
 
 
 # Force a land update in the database by calling the update_land_db() function
