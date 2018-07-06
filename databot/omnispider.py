@@ -29,8 +29,6 @@ except SyntaxError:
 
 
 async def get_grain_price():
-    previous_price = 0
-
     await asyncio.sleep(ini.UPDATE_RATE)
     br.open('{}'.format(ini.LAND_URL))
     result = br.find('h2', {'class': 'text-bold text-light space-1'}).get_text()
