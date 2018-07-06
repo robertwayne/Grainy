@@ -30,7 +30,7 @@ except SyntaxError:
 
 async def get_grain_price():
     await asyncio.sleep(ini.UPDATE_RATE)
-    br.open('{}'.format(ini.LAND_URL))
+    br.open('https://www.zapoco.com/land/grain')
     result = br.find('h2', {'class': 'text-bold text-light space-1'}).get_text()
     # replace 'result' commas with whitespace and convert to an int
     r = result.replace(',', '')
