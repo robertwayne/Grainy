@@ -86,7 +86,7 @@ async def land(ctx):
                  value=str(land['owned_building']))
     em.set_footer(text='Total Owned: ' + str(land['total_owned']) + ' | Total:' + str(land['total']) + ' | Last updated: ' + str(land['timestamp']))
 
-    print(str(ctx.message.author) + ': ' + str(land))
+    print(str(ctx.message.author) + ' searched for recent land stats')
     await bot.say(embed=em)
 
 
@@ -128,10 +128,10 @@ async def item(ctx, x):
                     em.add_field(name='{}'.format(stat),
                                  value=str(int(item[stat])),
                                  inline=False)
-            print(str(ctx.message.author) + ': ' + str(item))
+            print(str(ctx.message.author) + ' searched for ' + str(item['Name']))
             await bot.say(embed=em)
         else:
-            print(str(ctx.message.author) + ': ' + str(item))
+            print(str(ctx.message.author) + ' failed to search for ' + str(x))
             await bot.say('Item not found.')
 
 
@@ -195,10 +195,10 @@ async def vehicle(ctx, x):
                     em.add_field(name='{}'.format(stat),
                                  value=vehicle[stat],
                                  inline=False)
-            print(str(ctx.message.author) + ': ' + str(vehicle))
+            print(str(ctx.message.author) + ' searched for ' + str(vehicle['Name']))
             await bot.say(embed=em)
         else:
-            print(str(ctx.message.author) + ': ' + str(vehicle))
+            print(str(ctx.message.author) + ' failed to search for ' + str(x))
             await bot.say('Vehicle not found.')
 
 
@@ -212,21 +212,21 @@ async def tier(ctx):
 @bot.command(pass_context=True, no_pm=True)
 async def hug(ctx):
     msg = '*hugs everyone* You are all awesome!'
-    print(str(ctx.message.author) + ': ' + msg)
+    print(str(ctx.message.author) + ' used !hug')
     await bot.say(msg)
 
 
 @bot.command(pass_context=True, no_pm=True)
 async def thunder(ctx):
     msg = 'https://cdn.discordapp.com/attachments/445926098816073738/461366338129100800/unknown.png'
-    print(str(ctx.message.author) + ': ' + msg)
+    print(str(ctx.message.author) + ' used !thunder')
     await bot.say(msg)
 
 
 @bot.command(pass_context=True, no_pm=True)
 async def sightings(ctx):
     msg = 'https://cdn.discordapp.com/attachments/445926098816073738/466411177476620288/image.png'
-    print(str(ctx.message.author) + ': ' + msg)
+    print(str(ctx.message.author) + ' used !sightings')
     await bot.say(msg)
 
 
@@ -234,7 +234,7 @@ async def sightings(ctx):
 async def tom(ctx):
     msg = ['For real though, F Tom...', 'F Tom...', 'F Tom!', 'Fuck Hillto- er, I mean F Tom!', 'Yeah, F Tom!']
     r_msg = random.choice(msg)
-    print(str(ctx.message.author) + ': ' + r_msg)
+    print(str(ctx.message.author) + ' used !tom')
     await bot.say(r_msg)
 
 

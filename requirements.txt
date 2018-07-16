@@ -3,3 +3,4 @@ robobrowser
 grequests
 discord.py
 pymysql
+flask
