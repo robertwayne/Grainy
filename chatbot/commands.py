@@ -61,6 +61,9 @@ async def help():
     em.add_field(name='!land',
                  value='Displays general land ownership statistics.',
                  inline=False)
+    em.add_field(name='!compare "weapon name" "weapon name or id id',
+                 value='Compares two weapons stats side-by-side.',
+                 inline=False)
     em.add_field(name='!restart',
                  value='Allows an elevated user to restart me.',
                  inline=False)
@@ -130,6 +133,41 @@ async def item(ctx, x):
         else:
             print(str(ctx.message.author) + ': ' + str(item))
             await bot.say('Item not found.')
+
+
+@bot.command(pass_context=True, no_pm=True, aliases=['c'])
+async def compare(ctx, x, y):
+    try:
+        item1 = await db_get_item_stats_from_name(x)
+        item2 = await db_get_item_stats_from_name(y)
+        try:
+            if item1 is None:
+                item1 = await db_get_item_stats(x)
+        finally:
+            if item2 is None:
+                item2 = await db_get_item_stats(y)
+    except TypeError as e:
+        print(e)
+    finally:
+        if item1['Type'] == 'Weapon' and item2['Type'] == 'Weapon':
+            if item1 and item2:
+                em = discord.Embed(title=str(item1['Name']) + '  vs  ' + str(item2['Name']),
+                                   color=0x783e8e)
+                em.add_field(name='Damage',
+                             value='{}  vs  {}'.format(item1['Damage'], item2['Damage']),
+                             inline=False)
+                em.add_field(name='Accuracy',
+                             value='{}  vs  {}'.format(item1['Accuracy'], item2['Accuracy']),
+                             inline=False)
+                em.add_field(name='Stealth',
+                             value='{}  vs  {}'.format(item1['Stealth'], item2['Stealth']),
+                             inline=False)
+
+                print(str(ctx.message.author) + ' compared ' + str(item1['Name']) + ' and ' + str(item2['Name']))
+                await bot.say(embed=em)
+        else:
+            print(str(ctx.message.author) + ' failed to compare ' + str(item1['Name']) + ' and ' + str(item2['Name']))
+            await bot.say('Items are not weapons or incorrect ID / Names given.')
 
 
 @bot.command(pass_context=True, no_pm=True, aliases=['v'])
