@@ -70,7 +70,7 @@ async def help():
 
 # noinspection PyShadowingNames
 @bot.command(pass_context=True, no_pm=True)
-async def land():
+async def land(ctx):
     # noinspection PyShadowingNames
     land = await db_get_land_stats()
     em = discord.Embed(title='Land Stats',
@@ -83,6 +83,7 @@ async def land():
                  value=str(land['owned_building']))
     em.set_footer(text='Total Owned: ' + str(land['total_owned']) + ' | Total:' + str(land['total']) + ' | Last updated: ' + str(land['timestamp']))
 
+    print(str(ctx.message.author) + ': ' + str(land))
     await bot.say(embed=em)
 
 
@@ -112,7 +113,7 @@ async def item(ctx, x):
                     pass
                 elif stat == 'Purchasable':
                     pass
-                elif item[stat] is None or item[stat] == '0.0':
+                elif item[stat] is None or item[stat] == 0.0 or item[stat] == 0:
                     pass
                 elif stat == 'id':
                     pass
@@ -124,9 +125,11 @@ async def item(ctx, x):
                     em.add_field(name='{}'.format(stat),
                                  value=str(int(item[stat])),
                                  inline=False)
+            print(str(ctx.message.author) + ': ' + str(item))
             await bot.say(embed=em)
         else:
-            await bot.say('Item name not found.')
+            print(str(ctx.message.author) + ': ' + str(item))
+            await bot.say('Item not found.')
 
 
 @bot.command(pass_context=True, no_pm=True, aliases=['v'])
@@ -154,44 +157,46 @@ async def vehicle(ctx, x):
                     em.add_field(name='{}'.format(stat),
                                  value=vehicle[stat],
                                  inline=False)
+            print(str(ctx.message.author) + ': ' + str(vehicle))
             await bot.say(embed=em)
         else:
+            print(str(ctx.message.author) + ': ' + str(vehicle))
             await bot.say('Vehicle not found.')
 
 
 @bot.command(pass_context=True, no_pm=True)
-async def tier():
+async def tier(ctx):
     msg = '*tier is a shining star and we love her*'
-    print(msg)
+    print(str(ctx.message.author) + ': ' + msg)
     await bot.say(msg)
 
 
 @bot.command(pass_context=True, no_pm=True)
-async def hug():
+async def hug(ctx):
     msg = '*hugs everyone* You are all awesome!'
-    print(msg)
+    print(str(ctx.message.author) + ': ' + msg)
     await bot.say(msg)
 
 
 @bot.command(pass_context=True, no_pm=True)
-async def thunder():
+async def thunder(ctx):
     msg = 'https://cdn.discordapp.com/attachments/445926098816073738/461366338129100800/unknown.png'
-    print(msg)
+    print(str(ctx.message.author) + ': ' + msg)
     await bot.say(msg)
 
 
 @bot.command(pass_context=True, no_pm=True)
-async def sightings():
+async def sightings(ctx):
     msg = 'https://cdn.discordapp.com/attachments/445926098816073738/466411177476620288/image.png'
-    print(msg)
+    print(str(ctx.message.author) + ': ' + msg)
     await bot.say(msg)
 
 
 @bot.command(pass_context=True, no_pm=True)
-async def tom():
+async def tom(ctx):
     msg = ['For real though, F Tom...', 'F Tom...', 'F Tom!', 'Fuck Hillto- er, I mean F Tom!', 'Yeah, F Tom!']
     r_msg = random.choice(msg)
-    print(r_msg)
+    print(str(ctx.message.author) + ': ' + r_msg)
     await bot.say(r_msg)
 
 
