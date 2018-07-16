@@ -12,7 +12,13 @@ import chatbot.commands
 async def on_member_join(member):
     # rewrite this to use config file and role ID's
     role_new = discord.utils.get(member.server.roles, name='{}'.format(ini.NEWBIE_ROLE_NAME))
-    await bot.add_roles(member, role_new)
+    try:
+        await bot.add_roles(member, role_new)
+    except Exception as e:
+        await bot.send_message(ini.DEV_CHANNEL_ID, 'Failed to add ' + member + ' to Newbies role. See log for details.')
+        print(e)
+    finally:
+        await bot.send_message(ini.DEV_CHANNEL_ID, 'Successfully added ' + member + ' to Newbies role.')
 
 
 @bot.event
@@ -27,7 +33,7 @@ async def on_ready():
 def main():
     event_loop = asyncio.get_event_loop()
     try:
-        asyncio.ensure_future(grain_alerts())
+        # asyncio.ensure_future(grain_alerts())
         bot.run(ini.BOT_TOKEN)
         event_loop.run_forever()
     except Exception as e:

@@ -4,5 +4,5 @@ setup(
     name='OmniBot',
     version='1.0dev',
     packages=['config', 'databot', 'chatbot'],
-    long_description=open('README.txt').read(),
+    long_description=open('../docs/readme.md').read(),
 )
