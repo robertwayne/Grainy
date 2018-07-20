@@ -8,33 +8,33 @@ import config.configuration as ini
 db = conn.cursor()
 
 
-async def grain_alerts():
-    previous_price = 0
-
-    while True:
-        await asyncio.sleep(ini.UPDATE_RATE)
-        db.execute("SELECT `current_price` FROM `grain`")
-        price = db.fetchone()
-        p = int(price['current_price'])
-        if p == ini.EVERYONE_ALERT_THRESHOLD and previous_price != price:
-            print(str(datetime.datetime.utcnow()) + ': ' + 'Grain Price: ' + str(p))
-            em = discord.Embed(title="Grain Alert",
-                               url="https://www.zapoco.com/land/grain",
-                               description="**Price: " + str(p) + "**",
-                               color=0x783e8e,
-                               timestamp=datetime.datetime.utcnow())
-            await bot.send_message(bot.get_channel(ini.OMNIBOT_CHANNEL_ID), embed=em)
-            previous_price = price
-        elif int(price['current_price']) > ini.ALERT_THRESHOLD and previous_price != price:
-            print(str(datetime.datetime.utcnow()) + ': ' + 'Grain Price: ' + str(p))
-            em = discord.Embed(title="Grain Alert",
-                               url="https://www.zapoco.com/land/grain",
-                               description="**Price: " + str(p) + "**",
-                               color=0x783e8e,
-                               timestamp=datetime.datetime.utcnow())
-            await bot.send_message(bot.get_channel(ini.OMNIBOT_CHANNEL_ID), embed=em)
-            previous_price = price
-        conn.commit()
+# async def grain_alerts():
+#     previous_price = 0
+#
+#     while True:
+#         await asyncio.sleep(ini.UPDATE_RATE)
+#         db.execute("SELECT `current_price` FROM `grain`")
+#         price = db.fetchone()
+#         p = int(price['current_price'])
+#         if p == ini.EVERYONE_ALERT_THRESHOLD and previous_price != price:
+#             print(str(datetime.datetime.utcnow()) + ': ' + 'Grain Price: ' + str(p))
+#             em = discord.Embed(title="Grain Alert",
+#                                url="https://www.zapoco.com/land/grain",
+#                                description="**Price: " + str(p) + "**",
+#                                color=0x783e8e,
+#                                timestamp=datetime.datetime.utcnow())
+#             await bot.send_message(bot.get_channel(ini.OMNIBOT_CHANNEL_ID), embed=em)
+#             previous_price = price
+#         elif int(price['current_price']) > ini.ALERT_THRESHOLD and previous_price != price:
+#             print(str(datetime.datetime.utcnow()) + ': ' + 'Grain Price: ' + str(p))
+#             em = discord.Embed(title="Grain Alert",
+#                                url="https://www.zapoco.com/land/grain",
+#                                description="**Price: " + str(p) + "**",
+#                                color=0x783e8e,
+#                                timestamp=datetime.datetime.utcnow())
+#             await bot.send_message(bot.get_channel(ini.OMNIBOT_CHANNEL_ID), embed=em)
+#             previous_price = price
+#         conn.commit()
 
 
 async def db_get_land_stats():
@@ -79,3 +79,21 @@ async def db_get_vehicle_stats_from_name(x):
     conn.commit()
 
     return stats
+
+
+async def db_get_banned_user(x):
+    sql = "SELECT * FROM `discord_users` WHERE MATCH (banned) AGAINST (%s)"
+    db.execute(sql, x)
+    user = db.fetchone()
+    conn.commit()
+
+    return user
+
+
+async def db_get_muted_users():
+    sql = "SELECT * FROM `discord_users` WHERE muted"
+    db.execute(sql)
+    users = db.fetchall()
+    conn.commit()
+
+    return users
