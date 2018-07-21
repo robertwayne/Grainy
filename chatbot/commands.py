@@ -1,3 +1,5 @@
+import sys
+sys.path.append('../')
 from discord.ext import commands
 from chatbot.client import bot
 import discord
@@ -21,7 +23,6 @@ async def on_message(message):
     await bot.process_commands(message)
 
 
-@bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
         return
@@ -161,6 +162,10 @@ async def item(ctx, x, *, y: int=None):
                         em.add_field(name='{}'.format(stat),
                                      value='{}'.format(str(int(item[stat]) * y) + 'm (' + str(int((50 / item[stat]))) + 'x before OD)'),
                                      inline=False)
+                        # if stat['Cooldown'] > 50.0:
+                        #     em.add_field(name='',
+                        #                  value='You will overdose using this many ' + str(x) + '.',
+                        #                  inline=False)
                     elif stat:
                         em.add_field(name='{}'.format(stat),
                                      value=str(item[stat] * y),

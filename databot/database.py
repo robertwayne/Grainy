@@ -1,3 +1,5 @@
+import sys
+sys.path.append('../')
 import pymysql
 import config.configuration as ini
 

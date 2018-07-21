@@ -1,3 +1,5 @@
+import sys
+sys.path.append('../')
 import grequests
 from robobrowser import RoboBrowser
 import re
@@ -5,6 +7,7 @@ import asyncio
 import config.configuration as ini
 from databot.database import conn
 import datetime
+import random
 
 # open up a cursor
 db = conn.cursor()
@@ -14,9 +17,10 @@ headers = {
     "Connection": "keep-alive"
 }
 
-session = grequests.Session()
-session.headers = headers
-br = RoboBrowser(session=session, parser='html.parser', history=True)
+session_name = grequests.Session()
+session_name.headers = headers
+
+br = RoboBrowser(session=session_name, parser='html.parser', history=True)
 br.open('{url}'.format(url=ini.LOGIN_URL))
 
 form = br.get_form()
@@ -28,24 +32,60 @@ except SyntaxError:
     print("Form submission failed. Invalid log-in data.")
 
 
+def create_session():
+    # Build a session and submit log-in data upon initialization
+    headers = {
+        "Connection": "keep-alive"
+    }
+
+    session_name = grequests.Session()
+    session_name.headers = headers
+
+    br = RoboBrowser(session=session_name, parser='html.parser', history=True)
+    br.open('{url}'.format(url=ini.LOGIN_URL))
+
+    form = br.get_form()
+    form['username'] = '{usr}'.format(usr=ini.BOT_USERNAME)
+    form['password'] = '{pwd}'.format(pwd=ini.BOT_PASSWORD)
+    try:
+        br.submit_form(form)
+    except SyntaxError:
+        print("Form submission failed. Invalid log-in data.")
+
+    return br
+
+
 async def get_grain_price():
-    await asyncio.sleep(ini.UPDATE_RATE)
+    db.execute("SELECT `current_price` FROM `grain`")
+    db_price = db.fetchone()
+    p1 = int(db_price['current_price'])
+    print(p1)
+
+    db.execute("SELECT `previous_price` FROM `grain`")
+    test = db.fetchone()
+    p2 = int(test['previous_price'])
+    print(p2)
+
+    timer = 4
+    await asyncio.sleep(timer)
+
+    br = create_session()
     br.open('https://www.zapoco.com/land/grain')
     result = br.find('h2', {'class': 'text-bold text-light space-1'}).get_text()
     # replace 'result' commas with whitespace and convert to an int
     r = result.replace(',', '')
     price = (int(r))
-    print(price)
+    print('Current Price: ' + str(price))
 
     return price
 
 
 async def db_update_grain():
     while True:
+        db.execute("UPDATE `grain` SET previous_price=current_price")
         cur_price = await get_grain_price()
         sql = "UPDATE `grain` SET current_price=%s"
         db.execute(sql, cur_price)
-        conn.commit()
 
 
 def get_item_stats(item_number):
@@ -292,6 +332,18 @@ async def db_update_item_table():
         pass
     finally:
         print('Success.')
+
+
+async def db_update_cost(x, y):
+    try:
+        db.execute("SELECT Name, Cost FROM items")
+        sql = "UPDATE items SET Cost=%s WHERE Name=%s"
+        db.execute(sql, (y, x))
+        conn.commit()
+    except Exception as e:
+        print(e)
+    finally:
+        print('Success')
 
 
 async def db_update_vehicle_table():

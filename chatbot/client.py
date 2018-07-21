@@ -1,3 +1,5 @@
+import sys
+sys.path.append('../')
 import discord
 from discord.ext import commands
 

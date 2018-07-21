@@ -1,3 +1,5 @@
+import sys
+sys.path.append('../')
 from databot.database import conn
 import asyncio
 import discord
@@ -55,7 +57,7 @@ async def db_get_item_stats(x):
 
 
 async def db_get_item_stats_from_name(x):
-    sql = "SELECT * FROM `items` WHERE MATCH (Name) AGAINST (%s)"
+    sql = "SELECT * FROM `items` WHERE MATCH (Name) AGAINST (%s IN BOOLEAN MODE)"
     db.execute(sql, x)
     stats = db.fetchone()
     conn.commit()
