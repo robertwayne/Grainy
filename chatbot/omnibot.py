@@ -33,7 +33,7 @@ async def on_ready():
     await bot.change_presence(game=discord.Game(name='!help | https://omnidb.io'))
 
 
-async def main():
+def main():
     # event_loop = asyncio.get_event_loop()
     # try:
         # asyncio.ensure_future(grain_alerts())
@@ -41,7 +41,6 @@ async def main():
         bot.run(ini.BOT_TOKEN)
     #     # event_loop.run_forever()
     except Exception as e:
-        await bot.send_message(ini.DEV_CHANNEL_ID, e)
         reload_bot()
     finally:
         # print('Closing event loop...')
