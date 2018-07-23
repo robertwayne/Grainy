@@ -7,6 +7,7 @@ import asyncio
 from chatbot.client import bot
 import config.configuration as ini
 import chatbot.commands
+from chatbot.commands import reload_bot
 
 
 @bot.event
@@ -32,17 +33,20 @@ async def on_ready():
     await bot.change_presence(game=discord.Game(name='!help | https://omnidb.io'))
 
 
-def main():
+async def main():
     # event_loop = asyncio.get_event_loop()
     # try:
         # asyncio.ensure_future(grain_alerts())
-    bot.run(ini.BOT_TOKEN)
+    try:
+        bot.run(ini.BOT_TOKEN)
     #     # event_loop.run_forever()
-    # except Exception as e:
-    #     print(e)
-    # finally:
-    #     print('Closing event loop...')
-    #     # event_loop.close()
+    except Exception as e:
+        await bot.send_message(ini.DEV_CHANNEL_ID, e)
+        reload_bot()
+    finally:
+        # print('Closing event loop...')
+        #     event_loop.close()
+        reload_bot()
 
 
 if __name__ == '__main__':
