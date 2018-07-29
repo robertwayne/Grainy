@@ -36,9 +36,8 @@ async def on_command_error(ctx, error):
 
 
 # restarts the entire bot script
-async def reload_bot():
+def reload_bot():
     python = sys.executable
-    await asyncio.sleep(1)
     os.execl(python, python, *sys.argv)
 
 
@@ -69,6 +68,9 @@ async def help(ctx, x=None):
         em.add_field(name='!db_force_delete_table <items | land | vehicles | NPC>',
                      value='Saves a backup of the relevant table data to ../DB_BACKUP/, then deletes it.',
                      inline=False)
+        em.add_field(name='!unfuck',
+                     value='Loads a DB backup of role permissions. [WARNING: Only use this if someone messes up permissions badly.]',
+                     inline=False)
         em.set_footer(text='You must be in a DB-ADMIN role or higher to use these commands.')
         await bot.say(embed=em)
     elif x == 'mod':
@@ -83,9 +85,6 @@ async def help(ctx, x=None):
                      inline=False)
         em.add_field(name='!kick <user>',
                      value='Kicks the user from the server.',
-                     inline=False)
-        em.add_field(name='!unfuck',
-                     value='Loads a DB backup of role permissions. [WARNING: Only use this if someone messes up permissions badly.]',
                      inline=False)
         em.set_footer(text='You must be in a MODERATOR role or higher to use these commands.')
         await bot.say(embed=em)
@@ -409,6 +408,20 @@ async def ban(ctx, user: discord.Member):
     finally:
         await bot.send_message(bot.get_channel(ini.DEV_CHANNEL_ID),
                                '{} executed !ban on {}.'.format(ctx.message.author, user.name))
+
+
+@bot.command(pass_context=True, no_pm=True)
+@commands.has_role('{}'.format(ini.ELEVATED_ROLE_NAME))
+async def purge(ctx, author):
+    return 0
+
+
+@bot.command(pass_context=True, no_pm=True)
+@commands.has_role('{}'.format(ini.ELEVATED_ROLE_NAME))
+async def sh():
+    msg = get_safehouse_respect()
+    await bot.say(msg)
+
 
 #####################################
 #         DATABASE COMMANDS         #
