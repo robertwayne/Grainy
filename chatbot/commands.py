@@ -47,7 +47,7 @@ async def restart(ctx):
     await bot.say('Restarting now!')
     await bot.send_message(bot.get_channel(ini.DEV_CHANNEL_ID), '{} executed !restart.'.format(ctx.message.author))
     print('Restarting...')
-    await reload_bot()
+    reload_bot()
 
 
 @bot.command(pass_context=True, no_pm=True)
@@ -293,70 +293,6 @@ async def vehicle(ctx, x):
         else:
             print(str(ctx.message.author) + ' failed to search for ' + str(x))
             await bot.say('Vehicle not found.')
-
-
-@bot.command(pass_context=True, no_pm=True)
-async def tier(ctx):
-    msg = '*tier is a shining star and we love her*'
-    print(str(ctx.message.author) + ': ' + msg)
-    await bot.say(msg)
-
-
-@bot.command(pass_context=True, no_pm=True)
-async def hug(ctx):
-    msg = '*hugs everyone* You are all awesome!'
-    print(str(ctx.message.author) + ' used !hug')
-    await bot.say(msg)
-
-
-@bot.command(pass_context=True, no_pm=True)
-async def thunder(ctx):
-    msg = 'https://cdn.discordapp.com/attachments/445926098816073738/461366338129100800/unknown.png'
-    print(str(ctx.message.author) + ' used !thunder')
-    await bot.say(msg)
-
-
-@bot.command(pass_context=True, no_pm=True)
-async def sightings(ctx):
-    msg = 'https://cdn.discordapp.com/attachments/445926098816073738/466411177476620288/image.png'
-    print(str(ctx.message.author) + ' used !sightings')
-    await bot.say(msg)
-
-
-@bot.command(pass_context=True, no_pm=True)
-async def ava(ctx):
-    msg = 'https://cdn.discordapp.com/attachments/456587705292423169/469693330075418624/ava.PNG'
-    print(str(ctx.message.author) + ' used !ava')
-    await bot.say(msg)
-
-
-@bot.command(pass_context=True, no_pm=True)
-async def bunny(ctx):
-    msg = 'https://cdn.discordapp.com/attachments/456587705292423169/469695790130921472/bunny.PNG'
-    print(str(ctx.message.author) + ' used !bunny')
-    await bot.say(msg)
-
-
-@bot.command(pass_context=True, no_pm=True, aliases=['merl1n', 'merl'])
-async def merlin(ctx):
-    msg = 'https://cdn.discordapp.com/attachments/456587705292423169/469695799329292288/merlin.PNG'
-    print(str(ctx.message.author) + ' used !merlin')
-    await bot.say(msg)
-
-
-@bot.command(pass_context=True, no_pm=True)
-async def tom(ctx):
-    msg = ['For real though, F Tom...', 'F Tom...', 'F Tom!', 'Fuck Hillto- er, I mean F Tom!', 'Yeah, F Tom!']
-    r_msg = random.choice(msg)
-    print(str(ctx.message.author) + ' used !tom')
-    await bot.say(r_msg)
-
-
-# @bot.command(pass_context=True)
-# @commands.has_any_role('The Brains', 'The Looks', 'Headmistress Lestrange', 'The Wildcard')
-# async def admin_alter_grain(ctx, x, y):
-#     await update_grain_threshold(x, y)
-#     await bot.say('New grain thresholds set.')
 
 
 #####################################
