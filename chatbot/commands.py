@@ -359,6 +359,13 @@ async def sh():
     await bot.say(msg)
 
 
+@bot.command(pass_context=True, no_pm=True)
+@commands.has_role('{}'.format(ini.ELEVATED_ROLE_NAME))
+async def leave_server(ctx):
+    await bot.leave_server('445926097662771212')
+    print('I have left server \'445926097662771212\'.')
+
+
 #####################################
 #         DATABASE COMMANDS         #
 #####################################
