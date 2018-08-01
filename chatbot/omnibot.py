@@ -13,15 +13,15 @@ from chatbot.commands import reload_bot
 @bot.event
 async def on_member_join(member):
     # rewrite this to use config file and role ID's
-    role_new = discord.utils.get(member.server.roles, name='Outsiders')
+    role_new = discord.utils.get(member.server.roles, name='Member')
     try:
         await bot.add_roles(member, role_new)
     except Exception as e:
-        await bot.send_message(bot.get_channel(ini.DEV_CHANNEL_ID), 'Failed to add {} to Outsiders role. See log for details.'.format(member.mention))
+        await bot.send_message(bot.get_channel(ini.DEV_CHANNEL_ID), 'Failed to add {} to Member role. See log for details.'.format(member.mention))
         print(e)
     finally:
-        await bot.send_message(bot.get_channel(ini.DEV_CHANNEL_ID), 'Successfully added {} to Outsiders role.'.format(member.mention))
-        print('{} joined the server as an Outsider.'.format(member))
+        await bot.send_message(bot.get_channel(ini.DEV_CHANNEL_ID), 'Successfully added {} to Member role.'.format(member.mention))
+        print('{} joined the server as an Member.'.format(member))
 
 
 @bot.event
