@@ -407,7 +407,7 @@ async def db_force_write_new_table(ctx, x):
         await bot.say('Failed to update. See error log.')
     finally:
         await bot.send_message(bot.get_channel(ini.DEV_CHANNEL_ID),
-                               '{} executed !dn_force_write_new_table {}.'.format(ctx.message.author, x))
+                               '{} executed !db_force_write_new_table {}.'.format(ctx.message.author, x))
 
 
 @bot.command(pass_context=True, no_pm=True)
